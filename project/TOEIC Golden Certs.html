@@ -69,6 +69,8 @@
 <script type="text/babel" src="js/cute-style.jsx"></script>
 <script type="text/babel" src="js/screens-games.jsx"></script>
 <script type="text/babel" src="js/screens-path.jsx"></script>
+<script type="text/babel" src="js/screens-shadowing.jsx"></script>
+<script type="text/babel" src="js/screens-daily-quest.jsx"></script>
 
 <script type="text/babel">
 const { useState, useEffect, useCallback } = React;
@@ -120,6 +122,8 @@ function App() {
   const [confetti, setConfetti] = useState(0);
   const [coachOpen, setCoachOpen] = useState(false);
   const [aiScenario, setAiScenario] = useState(null);
+  const [shadowingSet, setShadowingSet] = useState(null);
+  const [showDailyGate, setShowDailyGate] = useState(false);
   const [behindAlertOpen, setBehindAlertOpen] = useState(false);
   const [scheduleAdjusted, setScheduleAdjusted] = useState(null);
 
@@ -146,10 +150,15 @@ function App() {
   const goNav = useCallback((r) => {
     setRoute(r);
     window.scrollTo(0, 0);
-    // Trigger sign-in modal first time we hit dashboard
+    // First visit: sign-in modal
     if (r === 'dashboard' && !sessionStorage.getItem('toeic_signed')) {
       sessionStorage.setItem('toeic_signed', '1');
       setTimeout(() => setShowSignIn(true), 800);
+    }
+    // Every login to dashboard: show daily quest gate (once per session)
+    if (r === 'dashboard' && !sessionStorage.getItem('daily_gate_shown')) {
+      sessionStorage.setItem('daily_gate_shown', '1');
+      setTimeout(() => setShowDailyGate(true), 1200);
     }
   }, []);
 
@@ -182,6 +191,10 @@ function App() {
     'shop': <ShopScreen goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} firePoints={firePoints} setDemo={setDemo} />,
     'ai-conversation': <AIConversationCenter goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} onPickScenario={s => { setAiScenario(s); setRoute('ai-conversation-run'); }} />,
     'ai-conversation-run': aiScenario && <AIConversationRunner goNav={goNav} demo={demo} scenario={aiScenario} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} dark={tweaks.theme === 'dark'} />,
+    'shadowing': <ShadowingHub goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} onPickSet={s => { setShadowingSet(s); setRoute('shadowing-run'); }} />,
+    'shadowing-run': shadowingSet && <ShadowingRunner goNav={goNav} demo={demo} set={shadowingSet} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} dark={tweaks.theme === 'dark'} />,
+    'daily-quest': <DailyQuestHub goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} />,
+    'daily-quest-run': <DailyQuestRunner goNav={goNav} demo={demo} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} dark={tweaks.theme === 'dark'} onFinish={() => setShowDailyGate(false)} />,
     'games': <GameHub goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} openGame={(g) => { setActiveGame(g); setRoute('game-play'); }} />,
     'path': <LearningPathScreen goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} />,
     'game-play': activeGame === 'word-match' ? <WordMatchGame onExit={() => goNav('games')} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} /> :
@@ -207,6 +220,7 @@ function App() {
       {screens[route]}
 
       {showSignIn && <DailySignInModal streak={demo.streak} onClaim={claimSignIn} />}
+      {showDailyGate && <DailyQuestGate goNav={goNav} demo={demo} onSkip={() => { setShowDailyGate(false); }} />}
 
       {pointsFloater && (
         <PointsFloater key={pointsFloater.key} amount={pointsFloater.amount}

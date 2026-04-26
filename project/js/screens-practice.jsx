@@ -76,7 +76,7 @@ function PracticeCenter({ goNav, demo, dark }) {
 
         {/* Oral Conversation Practice — featured */}
         <SectionHeader title="口說練習" eyebrow="Oral Conversation · AI Roleplay" right={
-          <Badge tone="terra">NEW</Badge>
+          <Badge variant="terra">NEW</Badge>
         } />
         <PaperCard accent="left-terra" hover onClick={() => goNav('ai-conversation')}
           style={{ marginBottom: 32, padding: 28, position: 'relative', overflow: 'hidden' }}>
@@ -184,6 +184,67 @@ function PracticeCenter({ goNav, demo, dark }) {
                                border: '1px solid var(--border)', color: 'var(--ink-muted)',
                                fontStyle: 'italic' }}>
                   💬 Sarah is typing...
+                </div>
+              </div>
+            </div>
+          </div>
+        </PaperCard>
+
+        {/* Daily Quest card */}
+        <PaperCard accent="left-terra" hover onClick={() => goNav('daily-quest')}
+          style={{ marginBottom: 20, padding: '20px 28px', display: 'flex', alignItems: 'center', gap: 20,
+                   background: 'linear-gradient(135deg, rgba(21,101,192,0.04), var(--paper-card))' }}>
+          <div style={{ fontSize: 36, flexShrink: 0 }}>🗓️</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <Eyebrow color="#1565C0">Daily Quest · 每日任務</Eyebrow>
+              <Badge variant="terra">今日</Badge>
+            </div>
+            <h3 style={{ fontSize: 16, marginBottom: 4 }}>聽說讀寫 × 間隔重複 × 視覺化單字</h3>
+            <p style={{ color: 'var(--ink-muted)', fontSize: 13, lineHeight: 1.5 }}>每天 6 個高頻單字，依記憶曲線排程複習，模式每日輪換不重複。</p>
+          </div>
+          <Button variant="primary" style={{ flexShrink: 0 }} icon="arrowRight"
+                  onClick={e => { e.stopPropagation(); goNav('daily-quest'); }}>開始</Button>
+        </PaperCard>
+
+        {/* Shadowing card */}
+        <PaperCard accent="left-terra" hover onClick={() => goNav('shadowing')}
+          style={{ marginBottom: 32, padding: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20 }}>
+            <div style={{ padding: 14, background: '#2E7D32', color: '#fff',
+                          borderRadius: 14, boxShadow: '0 4px 0 rgba(27,94,32,0.3)', flexShrink: 0 }}>
+              <span style={{ fontSize: 22 }}>🎧</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <Eyebrow color="#2E7D32">Shadowing · 跟讀訓練</Eyebrow>
+                <Badge variant="green">NEW</Badge>
+              </div>
+              <h2 style={{ fontSize: 20, marginBottom: 8 }}>跟讀練習 — 節奏 × 語調 × 精準度</h2>
+              <p style={{ color: 'var(--ink-muted)', fontSize: 14, lineHeight: 1.6, marginBottom: 16 }}>
+                閱讀目標句子 → 默念複誦 → 憑記憶輸入 → 逐字比對精準度。
+                訓練你的語感與連音，讓口說更流暢自然。
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div>
+                  <Eyebrow color="var(--ink-muted)" style={{ fontSize: 9 }}>主題數</Eyebrow>
+                  <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 16 }}>4 主題</div>
+                </div>
+                <div>
+                  <Eyebrow color="var(--ink-muted)" style={{ fontSize: 9 }}>每組句數</Eyebrow>
+                  <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 16 }}>5–6 句</div>
+                </div>
+                <div>
+                  <Eyebrow color="var(--ink-muted)" style={{ fontSize: 9 }}>完成獎勵</Eyebrow>
+                  <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 16, color: '#2E7D32' }}>
+                    +50–150 PTS
+                  </div>
+                </div>
+                <div style={{ marginLeft: 'auto' }}>
+                  <Button variant="primary" style={{ background: '#2E7D32', boxShadow: '0 4px 0 rgba(27,94,32,0.3)' }}
+                          icon="arrowRight" onClick={e => { e.stopPropagation(); goNav('shadowing'); }}>
+                    開始跟讀
+                  </Button>
                 </div>
               </div>
             </div>

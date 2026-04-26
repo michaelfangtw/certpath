@@ -1,4 +1,5 @@
 {
+  "name": "certpath",
   "devDependencies": {
     "pdf-parse": "^2.4.5"
   }
