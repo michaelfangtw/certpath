@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8" />
+<title>TOEIC Golden Certs · 多益金證遊戲化練習平台</title>
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<link rel="stylesheet" href="styles/tokens.css" />
+<style>
+  body { margin: 0; background: var(--paper-base); color: var(--ink);
+         font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button, input { font-family: inherit; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--terra); color: #fff; }
+
+  /* Animations */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulseGold {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(175,76,47,0.5); }
+    50% { box-shadow: 0 0 0 12px rgba(175,76,47,0); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes pointsRise {
+    0% { opacity: 0; transform: translateX(-50%) translateY(40px) scale(0.8); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    80% { opacity: 1; transform: translateX(-50%) translateY(-20px) scale(1); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-80px) scale(0.9); }
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  body.dark {
+    background: #1a1612;
+    color: #F5EFEA;
+  }
+  body.dark { --paper-base: #1a1612; --paper-muted: #2d2520; --paper-card: #241e19;
+              --ink: #F5EFEA; --ink-muted: #A9A39C; --ink-faint: #6B6661;
+              --border: rgba(212,175,55,0.15); --border-soft: rgba(212,175,55,0.08); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="js/data.jsx"></script>
+<script type="text/babel" src="js/primitives.jsx"></script>
+<script type="text/babel" src="js/shell.jsx"></script>
+<script type="text/babel" src="js/screens-landing.jsx"></script>
+<script type="text/babel" src="js/screens-diagnostic.jsx"></script>
+<script type="text/babel" src="js/screens-dashboard.jsx"></script>
+<script type="text/babel" src="js/screens-practice.jsx"></script>
+<script type="text/babel" src="js/screens-extras.jsx"></script>
+<script type="text/babel" src="js/screens-ai-conversation.jsx"></script>
+<script type="text/babel" src="js/screens-behind-alert.jsx"></script>
+<script type="text/babel" src="js/cute-style.jsx"></script>
+<script type="text/babel" src="js/screens-games.jsx"></script>
+<script type="text/babel" src="js/screens-path.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "light",
+  "certTier": "gold",
+  "demoTier": "intermediate",
+  "showCoachBadge": true,
+  "vibe": "cute",
+  "activeGame": null
+}/*EDITMODE-END*/;
+
+function ConfettiBurst({ trigger }) {
+  if (!trigger) return null;
+  const colors = ['#AF4C2F', '#D4AF37', '#2E7D32', '#1565C0', '#8C3B24'];
+  return (
+    <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 199 }}>
+      {Array.from({ length: 60 }, (_, i) => {
+        const left = Math.random() * 100;
+        const dur = 2 + Math.random() * 2;
+        const delay = Math.random() * 0.6;
+        const w = 6 + Math.random() * 10;
+        return (
+          <div key={`${trigger}-${i}`} style={{
+            position: 'absolute', top: 0, left: `${left}%`,
+            width: w, height: w * 0.6,
+            background: colors[i % colors.length],
+            animation: `confettiFall ${dur}s linear ${delay}s forwards`,
+            transform: 'rotate(0)',
+          }} />
+        );
+      })}
+    </div>
+  );
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [route, setRoute] = useState('landing');
+  const [demo, setDemo] = useState(() => ({
+    ...DEMO_TIERS[TWEAK_DEFAULTS.demoTier],
+    firstName: 'Angela', name: 'Angela', avatar: 'A',
+  }));
+  const [diagResult, setDiagResult] = useState(null);
+  const [quizResult, setQuizResult] = useState(null);
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [pointsFloater, setPointsFloater] = useState(null);
+  const [confetti, setConfetti] = useState(0);
+  const [coachOpen, setCoachOpen] = useState(false);
+  const [aiScenario, setAiScenario] = useState(null);
+  const [behindAlertOpen, setBehindAlertOpen] = useState(false);
+  const [scheduleAdjusted, setScheduleAdjusted] = useState(null);
+
+  // Sync demo when demoTier tweak changes (only if not coming from diagnostic)
+  useEffect(() => {
+    if (!diagResult) {
+      const base = DEMO_TIERS[tweaks.demoTier] || DEMO_TIERS.intermediate;
+      setDemo(d => ({ ...d, ...base, firstName: 'Angela', name: 'Angela', avatar: 'A' }));
+    }
+  }, [tweaks.demoTier]);
+
+  // Apply theme to body
+  useEffect(() => {
+    document.body.classList.toggle('dark', tweaks.theme === 'dark');
+  }, [tweaks.theme]);
+
+  // Apply cute vibe
+  useEffect(() => {
+    document.body.classList.toggle('cute', tweaks.vibe === 'cute');
+  }, [tweaks.vibe]);
+
+  const [activeGame, setActiveGame] = useState(null);
+
+  const goNav = useCallback((r) => {
+    setRoute(r);
+    window.scrollTo(0, 0);
+    // Trigger sign-in modal first time we hit dashboard
+    if (r === 'dashboard' && !sessionStorage.getItem('toeic_signed')) {
+      sessionStorage.setItem('toeic_signed', '1');
+      setTimeout(() => setShowSignIn(true), 800);
+    }
+  }, []);
+
+  const firePoints = useCallback((amt, label) => {
+    setPointsFloater({ amount: amt, label, key: Date.now() });
+  }, []);
+
+  const fireConfetti = useCallback(() => {
+    setConfetti(Date.now());
+  }, []);
+
+  const claimSignIn = () => {
+    setShowSignIn(false);
+    setDemo(d => ({ ...d, points: d.points + 10 }));
+    firePoints(10, '每日簽到');
+  };
+
+  const screens = {
+    'landing': <LandingScreen goNav={goNav} />,
+    'login': <LoginScreen goNav={goNav} />,
+    'diagnostic-intro': <DiagnosticIntro goNav={goNav} />,
+    'diagnostic': <DiagnosticScreen goNav={goNav} setDiagResult={setDiagResult} />,
+    'diagnostic-result': <DiagnosticResult goNav={goNav} result={diagResult} setDemo={setDemo} />,
+    'dashboard': <DashboardScreen goNav={goNav} demo={demo} theme={tweaks.certTier} dark={tweaks.theme === 'dark'} openCoach={() => setCoachOpen(true)} />,
+    'practice': <PracticeCenter goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} />,
+    'review': <PracticeCenter goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} />,
+    'quiz': <QuizScreen goNav={goNav} demo={demo} setQuizResult={setQuizResult} />,
+    'quiz-result': <QuizResult goNav={goNav} demo={demo} result={quizResult} setDemo={setDemo} fireConfetti={fireConfetti} firePoints={firePoints} />,
+    'leaderboard': <LeaderboardScreen goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} />,
+    'shop': <ShopScreen goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} firePoints={firePoints} setDemo={setDemo} />,
+    'ai-conversation': <AIConversationCenter goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} onPickScenario={s => { setAiScenario(s); setRoute('ai-conversation-run'); }} />,
+    'ai-conversation-run': aiScenario && <AIConversationRunner goNav={goNav} demo={demo} scenario={aiScenario} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} dark={tweaks.theme === 'dark'} />,
+    'games': <GameHub goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} openGame={(g) => { setActiveGame(g); setRoute('game-play'); }} />,
+    'path': <LearningPathScreen goNav={goNav} demo={demo} dark={tweaks.theme === 'dark'} />,
+    'game-play': activeGame === 'word-match' ? <WordMatchGame onExit={() => goNav('games')} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} /> :
+                 activeGame === 'sound-pop' ? <SoundPopGame onExit={() => goNav('games')} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} /> :
+                 activeGame === 'word-order' ? <WordOrderGame onExit={() => goNav('games')} firePoints={firePoints} fireConfetti={fireConfetti} setDemo={setDemo} /> :
+                 null,
+  };
+
+  // Trigger behind-schedule alert on dashboard for advanced demo (gold target with little time)
+  useEffect(() => {
+    if (route === 'dashboard' && tweaks.demoTier === 'advanced' && !scheduleAdjusted &&
+        !sessionStorage.getItem('toeic_alert_seen')) {
+      const t = setTimeout(() => {
+        setBehindAlertOpen(true);
+        sessionStorage.setItem('toeic_alert_seen', '1');
+      }, 2200);
+      return () => clearTimeout(t);
+    }
+  }, [route, tweaks.demoTier, scheduleAdjusted]);
+
+  return (
+    <>
+      {screens[route]}
+
+      {showSignIn && <DailySignInModal streak={demo.streak} onClaim={claimSignIn} />}
+
+      {pointsFloater && (
+        <PointsFloater key={pointsFloater.key} amount={pointsFloater.amount}
+                       label={pointsFloater.label} onDone={() => setPointsFloater(null)} />
+      )}
+
+      <ConfettiBurst trigger={confetti} />
+
+      <CoachChat open={coachOpen} onClose={() => setCoachOpen(false)} />
+
+      <CuteBgDecor enabled={tweaks.vibe === 'cute' && route !== 'landing' && route !== 'login'} />
+      <LeoFloater enabled={tweaks.vibe === 'cute' && route !== 'landing' && route !== 'login' && route !== 'game-play' && !coachOpen} onClick={() => setCoachOpen(true)} />
+
+      <BehindScheduleAlert open={behindAlertOpen} demo={demo}
+        onAdjust={(addDays) => {
+          setBehindAlertOpen(false);
+          setDemo(d => ({ ...d, daysLeft: d.daysLeft + addDays }));
+          setScheduleAdjusted(addDays);
+          firePoints(0, `延長 ${addDays} 天`);
+        }}
+        onDismiss={() => setBehindAlertOpen(false)} />
+
+      {/* Floating coach button */}
+      {tweaks.showCoachBadge && route !== 'landing' && route !== 'login' && !coachOpen && (
+        <button onClick={() => setCoachOpen(true)} style={{
+          position: 'fixed', bottom: 24, right: 24, zIndex: 90,
+          width: 56, height: 56, borderRadius: 9999,
+          background: 'var(--terra)', color: '#fff', border: 'none', cursor: 'pointer',
+          boxShadow: '0 12px 32px -8px rgba(175,76,47,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          animation: 'pulseGold 2.5s infinite',
+        }}>
+          <Icon name="bot" size={26} />
+        </button>
+      )}
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="🚀 直接進入學員 Dashboard">
+          <TweakButton label="🏠 立即進入 Dashboard"
+                       onClick={() => { setShowSignIn(false); goNav('dashboard'); }} />
+          <TweakButton label="🎬 完整登入流程 (Login → Diagnostic → Dashboard)"
+                       onClick={() => goNav('landing')} />
+          <TweakButton label="⚡ 快速登入 → Dashboard (跳過診斷)"
+                       onClick={() => {
+                         setDemo({
+                           ...DEMO_TIERS[tweaks.demoTier || 'intermediate'],
+                           firstName: 'Angela', name: 'Angela', avatar: 'A',
+                         });
+                         goNav('dashboard');
+                       }} />
+        </TweakSection>
+
+        <TweakSection title="風格風貌">
+          <TweakRadio label="體驗風格" value={tweaks.vibe} onChange={v => setTweak('vibe', v)}
+                      options={[{ value: 'official', label: '🏛️ 金證官方' }, { value: 'cute', label: '🦁 Leo 可愛版' }]} />
+        </TweakSection>
+
+        <TweakSection title="顯示主題">
+          <TweakRadio label="深淺主題" value={tweaks.theme} onChange={v => setTweak('theme', v)}
+                      options={[{ value: 'light', label: '紙感淺色' }, { value: 'dark', label: '深夜書房' }]} />
+        </TweakSection>
+
+        <TweakSection title="目標證書色系">
+          <TweakRadio label="目標等級" value={tweaks.certTier} onChange={v => setTweak('certTier', v)}
+                      options={[
+                        { value: 'gold', label: '🥇 Gold' },
+                        { value: 'blue', label: '🔷 Blue' },
+                        { value: 'green', label: '🟢 Green' },
+                      ]} />
+        </TweakSection>
+
+        <TweakSection title="示範資料">
+          <TweakSelect label="學員程度" value={tweaks.demoTier}
+                       onChange={v => { setTweak('demoTier', v); setDiagResult(null); }}
+                       options={[
+                         { value: 'beginner', label: '🌱 初學者 (TOEIC 350)' },
+                         { value: 'intermediate', label: '💪 進階生 (TOEIC 720)' },
+                         { value: 'advanced', label: '🏆 高分衝刺 (TOEIC 920)' },
+                       ]} />
+          <TweakToggle label="浮動 AI 教練按鈕" value={tweaks.showCoachBadge}
+                       onChange={v => setTweak('showCoachBadge', v)} />
+        </TweakSection>
+
+        <TweakSection title="情境跳轉">
+          <TweakButton label="跳到登入頁" onClick={() => goNav('login')} />
+          <TweakButton label="跳到診斷結果" onClick={() => {
+            const lTotal = 7, rTotal = 8;
+            const correctL = tweaks.demoTier === 'advanced' ? 6 : tweaks.demoTier === 'beginner' ? 2 : 5;
+            const correctR = tweaks.demoTier === 'advanced' ? 7 : tweaks.demoTier === 'beginner' ? 2 : 5;
+            setDiagResult({
+              lCorrect: correctL, lTotal, rCorrect: correctR, rTotal,
+              listening: scaleListening(correctL, lTotal),
+              reading: scaleReading(correctR, rTotal),
+              answers: {}, wrong: [],
+            });
+            goNav('diagnostic-result');
+          }} />
+          <TweakButton label="觸發每日簽到" onClick={() => setShowSignIn(true)} />
+          <TweakButton label="觸發 +500 點動畫" onClick={() => { firePoints(500, '練習獎勵'); fireConfetti(); }} />
+          <TweakButton label="觸發進度落後警示" onClick={() => setBehindAlertOpen(true)} />
+          <TweakButton label="AI 對話練習" onClick={() => goNav('ai-conversation')} />
+          <TweakButton label="🎮 打開迷你遊戲" onClick={() => goNav('games')} />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

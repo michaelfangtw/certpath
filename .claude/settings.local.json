@@ -1,0 +1,16 @@
+{  
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Edit(*)",
+      "Read(*)",
+      "Write(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Skill(*)",
+      "Task(*)"      
+    ],
+    "ask": [],
+    "defaultMode": "bypassPermissions"
+  }
+}

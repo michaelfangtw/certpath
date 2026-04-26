@@ -1,0 +1,348 @@
+/* ==========================================================================
+   TOEIC Golden Certs — Design Tokens
+   "Academic Paper × Terra Ink" — a warm, scholarly, gamified system
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Serif+TC:wght@400;700;900&display=swap');
+
+:root {
+  /* ───── Core paper palette — the canvas ────────────────────────── */
+  --paper-base:   #F7F3F0;   /* default app background — warm off-white */
+  --paper-muted:  #EEE9E6;   /* inset panels, soft chips, rows */
+  --paper-card:   #FFFFFF;   /* raised surfaces (cards, tables) */
+
+  /* ───── Ink (foreground greys) ─────────────────────────────────── */
+  --ink:          #2D2926;   /* primary text & headings */
+  --ink-muted:    #6B6661;   /* secondary text, captions */
+  --ink-faint:    #A9A39C;   /* tertiary / placeholders (derived) */
+
+  /* ───── Terra — the one true accent ────────────────────────────── */
+  --terra:        #AF4C2F;   /* primary brand accent, CTAs, focus */
+  --terra-dark:   #8C3B24;   /* hover / pressed */
+  --terra-05:     rgba(175, 76, 47, 0.05);
+  --terra-10:     rgba(175, 76, 47, 0.10);
+  --terra-20:     rgba(175, 76, 47, 0.20);
+  --terra-40:     rgba(175, 76, 47, 0.40);
+
+  /* ───── Rule / border ──────────────────────────────────────────── */
+  --border:       #D9D1C9;   /* hairlines, dividers, card outlines */
+  --border-soft:  #E5DED6;   /* even softer inner rules */
+
+  /* ───── Certificate tier colors (semantic, never decorative) ───── */
+  --cert-gold:        #D4AF37;  /* 860 – 990 */
+  --cert-gold-tint:   #FFFDF0;
+  --cert-gold-text:   #854D0E;
+
+  --cert-blue:        #4A6E91;  /* 730 – 855 */
+  --cert-blue-tint:   #EFF4FA;
+  --cert-blue-text:   #1D4ED8;
+
+  --cert-green:       #4F7942;  /* 470 – 725 */
+  --cert-green-tint:  #ECFDF5;
+  --cert-green-text:  #065F46;
+
+  --cert-brown:       #78350F;  /* 220 – 465 */
+  --cert-brown-tint:  #FAF5F0;
+  --cert-brown-text:  #44403C;
+
+  --cert-orange:      #E67E22;  /* 10 – 215 */
+  --cert-orange-tint: #FFF7ED;
+  --cert-orange-text: #9A3412;
+
+  /* ───── Feedback states ────────────────────────────────────────── */
+  --state-success:    #4F7942;
+  --state-success-tint: #ECFDF5;
+  --state-warning:    #AF4C2F;  /* shares terra — deliberate */
+  --state-danger:     #991B1B;
+  --state-info:       #4A6E91;
+
+  /* ───── Type families ──────────────────────────────────────────── */
+  --font-sans:    'Inter', 'Noto Sans TC', ui-sans-serif, system-ui, sans-serif;
+  --font-serif:   'Noto Serif TC', 'EB Garamond', Georgia, serif;
+  --font-mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ───── Type scale — based on product usage ────────────────────── */
+  --fs-eyebrow:   10px;       /* uppercase labels, 0.2–0.3em tracking */
+  --fs-caption:   12px;
+  --fs-body-sm:   14px;
+  --fs-body:      16px;
+  --fs-body-lg:   18px;
+  --fs-h4:        20px;
+  --fs-h3:        24px;
+  --fs-h2:        32px;
+  --fs-h1:        40px;
+  --fs-display:   56px;       /* hero */
+
+  /* ───── Weights ────────────────────────────────────────────────── */
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-bold:      700;
+  --fw-black:     900;
+
+  /* ───── Radii ──────────────────────────────────────────────────── */
+  --r-xs:    6px;
+  --r-sm:    8px;
+  --r-md:    12px;
+  --r-lg:    16px;
+  --r-xl:    20px;
+  --r-2xl:   24px;
+  --r-full:  9999px;
+
+  /* ───── Spacing (4px grid) ─────────────────────────────────────── */
+  --s-0: 0;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+
+  /* ───── Shadows — soft & paper-like, never dark/glowy ──────────── */
+  --shadow-xs:    0 1px 2px rgba(45, 41, 38, 0.03);
+  --shadow-sm:    0 1px 3px rgba(45, 41, 38, 0.04), 0 2px 8px -4px rgba(45, 41, 38, 0.04);
+  --shadow-md:    0 1px 3px rgba(45, 41, 38, 0.02), 0 10px 40px -10px rgba(45, 41, 38, 0.03);
+  --shadow-lg:    0 20px 50px -15px rgba(175, 76, 47, 0.08);
+  --shadow-xl:    0 25px 60px -15px rgba(45, 41, 38, 0.08);
+  --shadow-terra: 0 10px 30px -10px rgba(175, 76, 47, 0.20);
+
+  /* ───── Motion ─────────────────────────────────────────────────── */
+  --ease-out:     cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:     200ms;
+  --dur-med:      300ms;
+  --dur-slow:     500ms;
+  --dur-epic:     700ms;
+
+  /* ───── Layout ─────────────────────────────────────────────────── */
+  --nav-h:        80px;
+  --content-max:  1280px;
+  --reading-max:  720px;
+}
+
+/* ==========================================================================
+   Base / Reset
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; border-color: var(--border); }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper-base);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Semantic typography
+   Headings and display text use the serif (Noto Serif TC) and are BLACK (900)
+   with a tight letter-spacing; body copy uses Inter.
+   ========================================================================== */
+h1, .h1 {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-black);
+  font-size: var(--fs-h1);
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 0;
+}
+h2, .h2 {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-black);
+  font-size: var(--fs-h2);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 0;
+}
+h3, .h3 {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-black);
+  font-size: var(--fs-h3);
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0;
+}
+h4, .h4 {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-h4);
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0;
+}
+.display {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-black);
+  font-size: var(--fs-display);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+p, .body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0;
+}
+.body-muted { color: var(--ink-muted); }
+.caption {
+  font-family: var(--font-sans);
+  font-size: var(--fs-caption);
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+/* The signature eyebrow — uppercase, black-weight, wide-tracked, often terra */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--terra);
+  line-height: 1;
+}
+.eyebrow--muted { color: var(--ink-muted); letter-spacing: 0.2em; }
+
+/* Numeric / stat display — serif, black, terra */
+.stat {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-black);
+  font-size: var(--fs-h1);
+  color: var(--terra);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Reusable component primitives
+   ========================================================================== */
+
+/* Paper card — the foundational container */
+.paper-card {
+  background: var(--paper-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--dur-slow) var(--ease-out);
+}
+.paper-card-accent  { border-left: 4px solid var(--terra); }
+.paper-card-double  { border: 4px double var(--border); box-shadow: var(--shadow-sm); }
+.paper-card:hover.paper-card--hover {
+  border-color: var(--terra-20);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 12px 24px;
+  border-radius: var(--r-sm);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-body-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--terra);
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+}
+.btn-primary:hover   { background: var(--terra-dark); box-shadow: var(--shadow-terra); }
+.btn-primary:active  { transform: translateY(1px); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--terra);
+  border: 2px solid var(--terra);
+  padding: 10px 22px;
+}
+.btn-outline:hover   { background: var(--terra-05); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-muted);
+  padding: 8px 16px;
+  font-size: var(--fs-body-sm);
+}
+.btn-ghost:hover     { color: var(--terra); background: var(--terra-05); }
+
+/* Answer option — the signature quiz surface */
+.answer-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--paper-card);
+  color: var(--ink-muted);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.answer-option:hover {
+  border-color: var(--terra-40);
+  background: var(--terra-05);
+  color: var(--ink);
+}
+.answer-option.is-selected {
+  border-color: var(--terra);
+  background: var(--terra-05);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--terra);
+}
+
+/* Minimal badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--r-xs);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid;
+}
+.badge-gold   { background: var(--cert-gold-tint);   border-color: rgba(212,175,55,0.3);  color: var(--cert-gold-text);   }
+.badge-blue   { background: var(--cert-blue-tint);   border-color: rgba(74,110,145,0.3);  color: var(--cert-blue-text);   }
+.badge-green  { background: var(--cert-green-tint);  border-color: rgba(79,121,66,0.3);   color: var(--cert-green-text);  }
+.badge-brown  { background: var(--cert-brown-tint);  border-color: rgba(120,53,15,0.3);   color: var(--cert-brown-text);  }
+.badge-orange { background: var(--cert-orange-tint); border-color: rgba(230,126,34,0.3);  color: var(--cert-orange-text); }
+.badge-terra  { background: var(--terra-10);         border-color: var(--terra-20);       color: var(--terra);            }
+.badge-ink    { background: var(--paper-muted);      border-color: var(--border);         color: var(--ink);              }
+
+/* Divider with eyebrow label */
+.rule { border: 0; border-top: 1px solid var(--border); margin: var(--s-6) 0; }
+
+/* Keyframes used across the app */
+@keyframes fadeIn    { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp   { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244,196,48,0.4) }
+  50%      { box-shadow: 0 0 0 12px rgba(244,196,48,0) }
+}
+.anim-fade-in  { animation: fadeIn  300ms var(--ease-out) both; }
+.anim-slide-up { animation: slideUp 400ms var(--ease-out) both; }

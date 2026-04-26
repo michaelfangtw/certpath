@@ -1,0 +1,16 @@
+{
+  "model": "opusplan",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[HOOK] Before modifying code: Have you confirmed requirements with the user? Do not guess or assume - ask the user if uncertain.'"
+          }
+        ]
+      }
+    ]
+  }
+}
