@@ -58,7 +58,7 @@ public symbols onto `window`.
 |------|------------------------|
 | `tweaks-panel.jsx` | `useTweaks` `TweaksPanel` `TweakSection` `TweakRow` `TweakSlider` `TweakToggle` `TweakRadio` `TweakSelect` `TweakText` `TweakNumber` `TweakColor` `TweakButton` |
 | `js/data.jsx` | `DIAGNOSTIC` `SAMPLE_QUIZ` `QUIZ_PARTS` `scaleListening` `scaleReading` `DEMO_TIERS` `LEADERBOARD` `COACH_GREETINGS` `RIVALS` `findRival` |
-| `js/primitives.jsx` | `Button` `PaperCard` `Icon` `Badge` `Eyebrow` `useCountUp` `TIER` |
+| `js/primitives.jsx` | `Icon` `Logo` `Eyebrow` `Button` `Badge` `PaperCard` `CertBadge` `TIER` `tierFromScore` `useCountUp` |
 | `js/shell.jsx` | `Navbar` `PointsFloater` `DailySignInModal` `AudioPlayer` `Part1Photo` |
 | `js/screens-landing.jsx` | `LandingScreen` `LoginScreen` |
 | `js/screens-diagnostic.jsx` | `DiagnosticIntro` `DiagnosticScreen` `DiagnosticResult` `RadarChartAnimated` |
