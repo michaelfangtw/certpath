@@ -70,6 +70,7 @@ public symbols onto `window`.
 | `js/cute-style.jsx` | `CuteBgDecor` `LeoFloater` |
 | `js/screens-games.jsx` | `GameHub` `WordMatchGame` `SoundPopGame` `WordOrderGame` |
 | `js/screens-path.jsx` | `LearningPathScreen` |
+| `js/screens-shadowing.jsx` | `ShadowingHub` `ShadowingRunner` |
 
 ---
 
