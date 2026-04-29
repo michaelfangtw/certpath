@@ -2,7 +2,7 @@
 // Principles: 1.單字視覺化  2.語言沉浸  3.間隔重複(SR)  4.聽說讀寫每天輪換
 // NOTE: Icon, Button, PaperCard, Eyebrow, Badge, Navbar, SectionHeader, TIER
 // are all defined globally by primitives.jsx / shell.jsx / screens-dashboard.jsx (loaded before this file).
-const { useState: useSQ, useEffect: useEQ, useRef: useRQ, useCallback: useCQ } = React;
+const { useState: useSQ, useEffect: useEQ, useRef: useRQ, useCallback: useCQ, useMemo: useMQ } = React;
 
 // ─── Vocabulary bank ──────────────────────────────────────────────────────────
 const VOCAB_BANK = [
@@ -160,7 +160,7 @@ function VocabCard({vocab, showFull, dark}) {
 function ReadQ({vocab, onAnswer}) {
   const [sel,setSel] = useSQ(null);
   const [rev,setRev] = useSQ(false);
-  const opts = [vocab.meaning, ...VOCAB_BANK.filter(v=>v.id!==vocab.id).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v.meaning)].sort(()=>Math.random()-0.5);
+  const opts = useMQ(() => [vocab.meaning, ...VOCAB_BANK.filter(v=>v.id!==vocab.id).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v.meaning)].sort(()=>Math.random()-0.5), [vocab.id]);
   const submit = () => { if(!sel||rev) return; setRev(true); setTimeout(()=>onAnswer(sel===vocab.meaning),900); };
   return (
     <div>
@@ -223,7 +223,7 @@ function ListenQ({vocab, onAnswer}) {
   const [sel,setSel] = useSQ(null);
   const [rev,setRev] = useSQ(false);
   const [played,setPlayed] = useSQ(false);
-  const opts = [vocab.meaning, ...VOCAB_BANK.filter(v=>v.id!==vocab.id).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v.meaning)].sort(()=>Math.random()-0.5);
+  const opts = useMQ(() => [vocab.meaning, ...VOCAB_BANK.filter(v=>v.id!==vocab.id).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v.meaning)].sort(()=>Math.random()-0.5), [vocab.id]);
   const submit = () => { if(!sel||rev) return; setRev(true); setTimeout(()=>onAnswer(sel===vocab.meaning),900); };
   return (
     <div>
