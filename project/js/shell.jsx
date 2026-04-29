@@ -143,15 +143,29 @@ function AudioPlayer({ transcript = '', onPlay }) {
   const [speed, setSpeed] = useStateS(1.0);
   const [progress, setProgress] = useStateS(0);
   const rafRef = useRefS();
+  const uttRef = useRefS();
+
+  const stop = () => {
+    setPlaying(false);
+    cancelAnimationFrame(rafRef.current);
+    window.speechSynthesis?.cancel();
+  };
 
   const start = () => {
-    if (playing) {
-      setPlaying(false);
-      cancelAnimationFrame(rafRef.current);
-      return;
-    }
+    if (playing) { stop(); return; }
     setPlaying(true);
     onPlay?.();
+
+    if (transcript && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(transcript);
+      utt.lang = 'en-US';
+      utt.rate = speed;
+      utt.onend = () => setPlaying(false);
+      uttRef.current = utt;
+      window.speechSynthesis.speak(utt);
+    }
+
     let p = progress;
     const dur = 6000 / speed;
     const t0 = performance.now() - p * dur;
@@ -164,7 +178,7 @@ function AudioPlayer({ transcript = '', onPlay }) {
     rafRef.current = requestAnimationFrame(tick);
   };
 
-  useEffectS(() => () => cancelAnimationFrame(rafRef.current), []);
+  useEffectS(() => () => { cancelAnimationFrame(rafRef.current); window.speechSynthesis?.cancel(); }, []);
 
   return (
     <div style={{
