@@ -280,6 +280,8 @@ function WordMatchGame({ onExit, firePoints, fireConfetti, setDemo }) {
     }
   }, [matched]);
 
+  useEffectGM(() => { if (done) window.scrollTo({ top: 0, behavior: 'smooth' }); }, [done]);
+
   const nextLevel = () => {
     setLevel(l => l + 1);
     setTime(0);
@@ -516,6 +518,8 @@ function SoundPopGame({ onExit, firePoints, fireConfetti, setDemo }) {
   // auto-speak on round entry
   useEffectGM(() => { const t = setTimeout(speak, 400); return () => clearTimeout(t); }, [round]);
 
+  useEffectGM(() => { if (done) window.scrollTo({ top: 0, behavior: 'smooth' }); }, [done]);
+
   const pop = (word) => {
     if (feedback) return;
     if (word === r.word) {
@@ -643,6 +647,8 @@ function WordOrderGame({ onExit, firePoints, fireConfetti, setDemo }) {
     setPicked([]);
     setSubmitted(null);
   }, [round]);
+
+  useEffectGM(() => { if (done) window.scrollTo({ top: 0, behavior: 'smooth' }); }, [done]);
 
   const pick = (i) => {
     if (submitted) return;
