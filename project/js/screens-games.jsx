@@ -79,6 +79,47 @@ const SCRAMBLE = [
     ] },
 ];
 
+// ── Dynamic vocab helpers ───────────────────────────────
+// VOCAB_BANK is defined in screens-daily-quest.jsx (loads after this file),
+// so it must be read lazily inside functions, never at top-level.
+function _getBank() {
+  try { return (typeof VOCAB_BANK !== 'undefined' && VOCAB_BANK.length >= 4) ? VOCAB_BANK : null; }
+  catch(e) { return null; }
+}
+// Mirrors getSRState from screens-daily-quest.jsx
+const _srP = id => { const n={v01:3,v02:1,v03:0,v04:2,v05:5,v06:0,v07:1,v08:4,v09:0,v10:2}[id]||0; return n===0?0:n<=2?1:n<=4?2:3; };
+
+function buildWordMatchLevels() {
+  const bank = _getBank();
+  if (!bank) return WORD_LEVELS;
+  const sorted = [...bank].sort((a,b) => _srP(a.id) - _srP(b.id));
+  const dyn = [];
+  const lbl = ['新單字','學習中','複習','已掌握'];
+  for (let i = 0; i < sorted.length; i += 6) {
+    const chunk = sorted.slice(i, i+6);
+    if (chunk.length < 2) break;
+    dyn.push({ name:`Lv ${dyn.length+1} · ${lbl[_srP(chunk[0].id)]}`, pairs:chunk.map(v=>({en:v.word,zh:v.meaning})) });
+  }
+  return dyn.length ? [...dyn, ...WORD_LEVELS] : WORD_LEVELS;
+}
+
+function buildSoundPops() {
+  const bank = _getBank();
+  if (!bank) return SOUND_POP;
+  const sorted = [...bank].sort((a,b) => _srP(a.id) - _srP(b.id));
+  return sorted.slice(0, 6).map(v => {
+    const others = bank.filter(b=>b.id!==v.id).sort(()=>Math.random()-0.5).slice(0,3).map(b=>b.word);
+    return { word:v.word, options:[v.word,...others].sort(()=>Math.random()-0.5) };
+  });
+}
+
+function buildScrambles() {
+  const bank = _getBank();
+  if (!bank) return SCRAMBLE;
+  const sorted = [...bank].sort((a,b) => _srP(a.id) - _srP(b.id));
+  return sorted.slice(0,4).map(v => ({ src:v.sentence.replace(/\*\*/g,''), zh:v.meaning, alts:[] }));
+}
+
 // ── Hub ─────────────────────────────────────────────────
 function GameHub({ goNav, demo, dark, openGame }) {
   const games = [
@@ -205,7 +246,8 @@ function WordMatchGame({ onExit, firePoints, fireConfetti, setDemo }) {
   const [history, setHistory] = useStateGM([]);   // [{level, time, pts}]
   const tRef = useRefGM(null);
 
-  const levelData = WORD_LEVELS[level % WORD_LEVELS.length];
+  const ALL_LEVELS = useMemoGM(() => buildWordMatchLevels(), []);
+  const levelData = ALL_LEVELS[level % ALL_LEVELS.length];
   const PAIRS = levelData.pairs;
 
   // Pronunciation helper — Web Speech API
@@ -472,7 +514,7 @@ function WordMatchGame({ onExit, firePoints, fireConfetti, setDemo }) {
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 22 }}>
               <Button variant="outline" onClick={stop}>結束 · 帶走點數</Button>
               <Button variant="primary" onClick={nextLevel} icon="arrowRight">
-                下一關（{WORD_LEVELS[(level + 1) % WORD_LEVELS.length].name.split('·')[0].trim()}）
+                下一關（{ALL_LEVELS[(level + 1) % ALL_LEVELS.length].name.split('·')[0].trim()}）
               </Button>
             </div>
           </div>
@@ -484,7 +526,7 @@ function WordMatchGame({ onExit, firePoints, fireConfetti, setDemo }) {
 
 // ── 2. Sound Pop ───────────────────────────────────────
 function SoundPopGame({ onExit, firePoints, fireConfetti, setDemo }) {
-  const ROUNDS = SOUND_POP;
+  const ROUNDS = useMemoGM(() => buildSoundPops(), []);
   const [round, setRound] = useStateGM(0);
   const [score, setScore] = useStateGM(0);
   const [feedback, setFeedback] = useStateGM(null); // 'right'|'wrong'|null
@@ -626,7 +668,7 @@ function SoundPopGame({ onExit, firePoints, fireConfetti, setDemo }) {
 
 // ── 3. Word Order ──────────────────────────────────────
 function WordOrderGame({ onExit, firePoints, fireConfetti, setDemo }) {
-  const ROUNDS = SCRAMBLE.slice(0, 4);
+  const ROUNDS = useMemoGM(() => buildScrambles(), []);
   const [round, setRound] = useStateGM(0);
   const [score, setScore] = useStateGM(0);
   const [done, setDone] = useStateGM(false);
