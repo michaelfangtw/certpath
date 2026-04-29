@@ -159,9 +159,19 @@ function VocabCard({vocab, showFull, dark}) {
 // ─── Question type: Read ──────────────────────────────────────────────────────
 function ReadQ({vocab, onAnswer}) {
   const [sel,setSel] = useSQ(null);
-  const [rev,setRev] = useSQ(false);
+  const [wrongSel,setWrongSel] = useSQ(null);
+  const [correct,setCorrect] = useSQ(false);
   const opts = useMQ(() => [vocab.meaning, ...VOCAB_BANK.filter(v=>v.id!==vocab.id).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v.meaning)].sort(()=>Math.random()-0.5), [vocab.id]);
-  const submit = () => { if(!sel||rev) return; setRev(true); setTimeout(()=>onAnswer(sel===vocab.meaning),900); };
+  const submit = () => {
+    if(!sel || correct) return;
+    if(sel === vocab.meaning) {
+      setCorrect(true);
+      setTimeout(() => onAnswer(true), 1800);
+    } else {
+      setWrongSel(sel);
+      setSel(null);
+    }
+  };
   return (
     <div>
       <div style={{padding:'16px 20px',background:'var(--paper-muted)',borderRadius:14,borderLeft:'4px solid #1565C0',marginBottom:24,fontFamily:'Georgia,serif',fontSize:15,lineHeight:1.8,color:'var(--ink)'}}>
@@ -170,21 +180,32 @@ function ReadQ({vocab, onAnswer}) {
       <p style={{fontWeight:700,fontSize:15,marginBottom:16}}>上文中 <strong style={{color:'#1565C0'}}>"{vocab.word}"</strong> 最貼近哪個意思？</p>
       <div style={{display:'flex',flexDirection:'column',gap:10}}>
         {opts.map((opt,i) => {
-          const isSel=sel===opt, isC=opt===vocab.meaning;
+          const isSel=sel===opt, isC=opt===vocab.meaning, isWrong=wrongSel===opt;
           let bg='var(--paper-card)', bd='var(--border)';
-          if(rev) { if(isC){bg='rgba(46,125,50,0.08)';bd='#2E7D32';} else if(isSel){bg='rgba(198,40,40,0.06)';bd='var(--state-error)';} }
+          if(correct && isC) { bg='rgba(46,125,50,0.08)'; bd='#2E7D32'; }
+          else if(isWrong) { bg='rgba(198,40,40,0.06)'; bd='var(--state-error)'; }
           else if(isSel) { bg='#1565C010'; bd='#1565C0'; }
           return (
-            <button key={i} onClick={()=>!rev&&setSel(opt)} style={{textAlign:'left',padding:'13px 18px',borderRadius:12,border:'1.5px solid '+bd,background:bg,color:'var(--ink)',fontSize:14,cursor:rev?'default':'pointer',fontFamily:'var(--font-sans)',display:'flex',alignItems:'center',gap:12,transition:'all 150ms'}}>
+            <button key={i} onClick={()=>{ if(correct) return; setSel(opt); setWrongSel(null); }}
+              style={{textAlign:'left',padding:'13px 18px',borderRadius:12,border:'1.5px solid '+bd,background:bg,color:'var(--ink)',fontSize:14,cursor:correct?'default':'pointer',fontFamily:'var(--font-sans)',display:'flex',alignItems:'center',gap:12,transition:'all 150ms'}}>
               <span style={{width:22,height:22,borderRadius:6,background:'#1565C015',color:'#1565C0',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:900,flexShrink:0}}>{String.fromCharCode(65+i)}</span>
               <span style={{flex:1}}>{opt}</span>
-              {rev&&isC&&<Icon name="check" size={16} style={{color:'#2E7D32'}}/>}
-              {rev&&isSel&&!isC&&<Icon name="x" size={16} style={{color:'var(--state-error)'}}/>}
+              {correct&&isC&&<Icon name="check" size={16} style={{color:'#2E7D32'}}/>}
+              {isWrong&&<Icon name="x" size={16} style={{color:'var(--state-error)'}}/>}
             </button>
           );
         })}
       </div>
-      {!rev && <div style={{marginTop:20,textAlign:'right'}}><Button variant="primary" style={{background:'#1565C0',boxShadow:'0 4px 0 rgba(13,71,161,0.3)'}} onClick={submit} disabled={!sel}>確認答案</Button></div>}
+      {!correct && <div style={{marginTop:20,textAlign:'right'}}><Button variant="primary" style={{background:'#1565C0',boxShadow:'0 4px 0 rgba(13,71,161,0.3)'}} onClick={submit} disabled={!sel}>確認答案</Button></div>}
+      {correct && (
+        <div style={{marginTop:20,padding:'16px 20px',borderRadius:14,background:'rgba(46,125,50,0.07)',border:'1.5px solid #2E7D32',animation:'slideUp 300ms var(--ease-out) both'}}>
+          <div style={{fontWeight:900,color:'#2E7D32',marginBottom:8}}>✓ 正確！</div>
+          <div style={{fontSize:13,color:'var(--ink)',lineHeight:1.7}}><strong>{vocab.word}</strong>：{vocab.meaning}</div>
+          <div style={{marginTop:8,fontSize:12,color:'var(--ink-muted)',fontStyle:'italic',fontFamily:'Georgia,serif',lineHeight:1.7}}>
+            <HL text={vocab.sentence} c="#1565C0" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -221,10 +242,20 @@ function WriteQ({vocab, onAnswer}) {
 // ─── Question type: Listen ────────────────────────────────────────────────────
 function ListenQ({vocab, onAnswer}) {
   const [sel,setSel] = useSQ(null);
-  const [rev,setRev] = useSQ(false);
+  const [wrongSel,setWrongSel] = useSQ(null);
+  const [correct,setCorrect] = useSQ(false);
   const [played,setPlayed] = useSQ(false);
   const opts = useMQ(() => [vocab.meaning, ...VOCAB_BANK.filter(v=>v.id!==vocab.id).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v.meaning)].sort(()=>Math.random()-0.5), [vocab.id]);
-  const submit = () => { if(!sel||rev) return; setRev(true); setTimeout(()=>onAnswer(sel===vocab.meaning),900); };
+  const submit = () => {
+    if(!sel || correct) return;
+    if(sel === vocab.meaning) {
+      setCorrect(true);
+      setTimeout(() => onAnswer(true), 1800);
+    } else {
+      setWrongSel(sel);
+      setSel(null);
+    }
+  };
   return (
     <div>
       <div style={{padding:'20px 24px',background:'var(--paper-muted)',borderRadius:14,marginBottom:24,display:'flex',alignItems:'center',gap:16}}>
@@ -244,21 +275,32 @@ function ListenQ({vocab, onAnswer}) {
         <p style={{fontWeight:700,fontSize:15,marginBottom:16}}>對話中 <strong style={{color:'#E65100'}}>"{vocab.word}"</strong> 的意思最接近？</p>
         <div style={{display:'flex',flexDirection:'column',gap:10}}>
           {opts.map((opt,i) => {
-            const isSel=sel===opt, isC=opt===vocab.meaning;
+            const isSel=sel===opt, isC=opt===vocab.meaning, isWrong=wrongSel===opt;
             let bg='var(--paper-card)', bd='var(--border)';
-            if(rev) { if(isC){bg='rgba(46,125,50,0.08)';bd='#2E7D32';} else if(isSel){bg='rgba(198,40,40,0.06)';bd='var(--state-error)';} }
+            if(correct && isC) { bg='rgba(46,125,50,0.08)'; bd='#2E7D32'; }
+            else if(isWrong) { bg='rgba(198,40,40,0.06)'; bd='var(--state-error)'; }
             else if(isSel) { bg='#E6510010'; bd='#E65100'; }
             return (
-              <button key={i} onClick={()=>!rev&&setSel(opt)} style={{textAlign:'left',padding:'13px 18px',borderRadius:12,border:'1.5px solid '+bd,background:bg,color:'var(--ink)',fontSize:14,cursor:rev?'default':'pointer',fontFamily:'var(--font-sans)',display:'flex',alignItems:'center',gap:12,transition:'all 150ms'}}>
+              <button key={i} onClick={()=>{ if(correct) return; setSel(opt); setWrongSel(null); }}
+                style={{textAlign:'left',padding:'13px 18px',borderRadius:12,border:'1.5px solid '+bd,background:bg,color:'var(--ink)',fontSize:14,cursor:correct?'default':'pointer',fontFamily:'var(--font-sans)',display:'flex',alignItems:'center',gap:12,transition:'all 150ms'}}>
                 <span style={{width:22,height:22,borderRadius:6,background:'#E6510015',color:'#E65100',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:900,flexShrink:0}}>{String.fromCharCode(65+i)}</span>
                 <span style={{flex:1}}>{opt}</span>
-                {rev&&isC&&<Icon name="check" size={16} style={{color:'#2E7D32'}}/>}
-                {rev&&isSel&&!isC&&<Icon name="x" size={16} style={{color:'var(--state-error)'}}/>}
+                {correct&&isC&&<Icon name="check" size={16} style={{color:'#2E7D32'}}/>}
+                {isWrong&&<Icon name="x" size={16} style={{color:'var(--state-error)'}}/>}
               </button>
             );
           })}
         </div>
-        {!rev && <div style={{marginTop:20,textAlign:'right'}}><Button variant="primary" style={{background:'#E65100',boxShadow:'0 4px 0 rgba(191,54,12,0.3)'}} onClick={submit} disabled={!sel}>確認答案</Button></div>}
+        {!correct && <div style={{marginTop:20,textAlign:'right'}}><Button variant="primary" style={{background:'#E65100',boxShadow:'0 4px 0 rgba(191,54,12,0.3)'}} onClick={submit} disabled={!sel}>確認答案</Button></div>}
+        {correct && (
+          <div style={{marginTop:20,padding:'16px 20px',borderRadius:14,background:'rgba(46,125,50,0.07)',border:'1.5px solid #2E7D32',animation:'slideUp 300ms var(--ease-out) both'}}>
+            <div style={{fontWeight:900,color:'#2E7D32',marginBottom:8}}>✓ 正確！</div>
+            <div style={{fontSize:13,color:'var(--ink)',lineHeight:1.7}}><strong>{vocab.word}</strong>：{vocab.meaning}</div>
+            <div style={{marginTop:8,fontSize:12,color:'var(--ink-muted)',fontFamily:'Georgia,serif',lineHeight:1.7}}>
+              "{vocab.audioCtx}"
+            </div>
+          </div>
+        )}
       </div>}
     </div>
   );
