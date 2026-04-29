@@ -136,7 +136,7 @@ function DiagnosticScreen({ goNav, setDiagResult }) {
           </div>
 
           {/* Listening: photo / audio */}
-          {q.part === 1 && <Part1Photo />}
+          {q.part === 1 && <Part1Photo kind={q.photo?.kind} />}
           {q.skill === 'listening' && <AudioPlayer transcript={q.audio} />}
           {q.skill === 'listening' && q.question && (
             <p style={{ fontSize: 17, fontWeight: 700, marginTop: 28, color: 'var(--ink)' }}>

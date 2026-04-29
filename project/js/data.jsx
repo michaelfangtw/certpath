@@ -200,6 +200,28 @@ const COACH_GREETINGS = [
 
 // Quiz items used by the QuizScreen (mix of listening + reading with `skill` + `explain`)
 const QUIZ_PARTS = [
+  { id: 'Q0a', skill: 'listening', part: 1,
+    audio: 'Look at the photograph marked number one in your test book.',
+    photo: { kind: 'meeting-room' },
+    options: {
+      A: 'Several people are seated around a table.',
+      B: 'A man is writing on the whiteboard.',
+      C: 'Chairs are stacked against the wall.',
+      D: 'The lights in the room are turned off.',
+    },
+    correct: 'A',
+    explain: '照片中多人圍坐圓桌，(A) 描述最貼切。(B) 無人正在書寫白板；(C)(D) 均與照片場景不符。' },
+  { id: 'Q0b', skill: 'listening', part: 1,
+    audio: 'Look at the photograph marked number two in your test book.',
+    photo: { kind: 'reception' },
+    options: {
+      A: 'A woman is mopping the floor.',
+      B: 'Some chairs are arranged in a circle.',
+      C: 'A receptionist is standing behind a counter.',
+      D: 'Luggage is piled near the entrance.',
+    },
+    correct: 'C',
+    explain: '照片顯示接待台前有工作人員站立，(C) 正確。(A)(B)(D) 均與照片描述不符。' },
   { id: 'Q1', skill: 'listening', part: 2,
     audio: 'When does the marketing report need to be submitted?',
     question: 'Choose the most appropriate response.',
