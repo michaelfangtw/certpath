@@ -67,20 +67,6 @@ const PATH_SECTIONS = [
   },
 ];
 
-// Mock progress — index of nodes the user has completed (with timestamps + scores)
-const PATH_PROGRESS_DEFAULT = {
-  // node id -> { completedAt, score, accuracy, pts, time }
-  n1: { completedAt: '4/19', score: 6, total: 6, accuracy: 100, pts: 60, time: '2:14', stars: 3 },
-  n2: { completedAt: '4/20', score: 4, total: 5, accuracy: 80,  pts: 80, time: '4:38', stars: 2 },
-  n3: { completedAt: '4/21', score: 7, total: 8, accuracy: 88,  pts: 80, time: '6:12', stars: 3 },
-  n4: { completedAt: '4/22', score: 88, total: 100, accuracy: 88, pts: 120, time: '7:20', stars: 3, kind: 'oral', breakdown: { fluency: 92, grammar: 85, relevance: 88 } },
-  n5: { completedAt: '4/23', score: 6, total: 6, accuracy: 100, pts: 100, time: '0:42', stars: 3, kind: 'game' },
-  n6: { completedAt: '4/24', score: 13, total: 15, accuracy: 87, pts: 200, time: '11:50', stars: 3, kind: 'boss' },
-  n7: { completedAt: '4/25', score: 4, total: 6, accuracy: 67, pts: 60, time: '5:30', stars: 1 },
-};
-
-// Currently active node (the next one)
-const PATH_CURRENT = 'n8';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const NODE_TYPE_META = {
@@ -104,11 +90,39 @@ function getNodeStatus(nodeId, progress, currentId, allNodes) {
 
 // ── Main path screen ───────────────────────────────────────────────────────
 function LearningPathScreen({ goNav, demo, dark, openGame }) {
-  const [progress] = useStateLP(PATH_PROGRESS_DEFAULT);
-  const [currentId] = useStateLP(PATH_CURRENT);
+  const [progress, setProgress] = useStateLP({});
   const [openNode, setOpenNode] = useStateLP(null);
 
   const allNodes = useMemoLP(() => PATH_SECTIONS.flatMap(s => s.nodes), []);
+
+  // Derive current node as first incomplete node
+  const currentId = allNodes.find(n => !progress[n.id])?.id ?? null;
+
+  useEffectLP(() => {
+    const sb = window.supabase;
+    if (!sb) return;
+    sb.from('user_path_progress')
+      .select('node_id, completed_at, score, total, accuracy, pts, time, stars, kind, breakdown')
+      .then(({ data, error }) => {
+        if (error || !data) return;
+        const map = {};
+        data.forEach(row => {
+          map[row.node_id] = {
+            completedAt: row.completed_at,
+            score: row.score,
+            total: row.total,
+            accuracy: row.accuracy,
+            pts: row.pts,
+            time: row.time,
+            stars: row.stars,
+            ...(row.kind ? { kind: row.kind } : {}),
+            ...(row.breakdown ? { breakdown: row.breakdown } : {}),
+          };
+        });
+        setProgress(map);
+      });
+  }, []);
+
   const totalDone = Object.keys(progress).length;
   const totalNodes = allNodes.length;
   const overallPct = Math.round((totalDone / totalNodes) * 100);
