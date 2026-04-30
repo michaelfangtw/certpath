@@ -234,11 +234,44 @@ function AIConversationRunner({ goNav, demo, scenario, onComplete, firePoints, f
   const [showSample, setShowSample] = useStateAI(-1);
   const scrollRef = useRefAI();
   const tRef = useRefAI();
+  const srRef = useRefAI(null);
 
   useEffectAI(() => {
     tRef.current = setInterval(() => setTime(t => t + 1), 1000);
     return () => clearInterval(tRef.current);
   }, []);
+
+  const handleMic = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      alert('此瀏覽器不支援語音輸入，請改用 Chrome 或 Edge。');
+      return;
+    }
+    if (recording) {
+      srRef.current?.stop();
+      srRef.current = null;
+      setRecording(false);
+      return;
+    }
+    const sr = new SR();
+    sr.lang = 'en-US';
+    sr.interimResults = true;
+    sr.continuous = false;
+    srRef.current = sr;
+    sr.onresult = (e) => {
+      const transcript = Array.from(e.results)
+        .map(r => r[0].transcript).join('');
+      if (e.results[e.results.length - 1].isFinal) {
+        setDraft(d => (d ? d + ' ' : '') + transcript.trim());
+        srRef.current = null;
+        setRecording(false);
+      }
+    };
+    sr.onerror = () => { srRef.current = null; setRecording(false); };
+    sr.onend = () => { srRef.current = null; setRecording(false); };
+    sr.start();
+    setRecording(true);
+  };
 
   useEffectAI(() => {
     scrollRef.current?.scrollTo({ top: 1e6, behavior: 'smooth' });
@@ -540,7 +573,7 @@ function AIConversationRunner({ goNav, demo, scenario, onComplete, firePoints, f
         }}>
           <div style={{ maxWidth: 720, margin: '0 auto' }}>
             <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
-              <button onClick={() => setRecording(r => !r)} style={{
+              <button onClick={handleMic} style={{
                 width: 48, height: 48, borderRadius: 12, border: 'none',
                 background: recording ? 'var(--state-error)' : 'var(--paper-muted)',
                 color: recording ? '#fff' : 'var(--ink)',
