@@ -24,6 +24,18 @@ project/
 ├── tweaks-panel.jsx             ← dev Tweaks panel shell
 ├── styles/
 │   └── tokens.css               ← CSS design tokens
+├── vendor/                      ← vendored front-end dependencies (React 18 + Babel)
+│   ├── babel.min.js             ← Babel standalone transpiler
+│   ├── react.development.js     ← React 18 UMD build
+│   └── react-dom.development.js ← React DOM 18 UMD build
+├── export/                      ← export snapshot for sharing / offline use
+│   ├── TOEIC Golden Certs.html  ← self-contained entry point
+│   └── src/                     ← source files bundled with the export snapshot
+│       ├── TOEIC Golden Certs.html
+│       ├── tweaks-panel.jsx
+│       ├── styles/
+│       │   └── tokens.css
+│       └── js/                  ← subset of js/ files included in export
 └── js/
     ├── data.jsx                 ← mock data + helper functions
     ├── primitives.jsx           ← shared UI atoms
