@@ -112,7 +112,7 @@ function App() {
   const [route, setRoute] = useState('landing');
   const [demo, setDemo] = useState(() => ({
     ...DEMO_TIERS[TWEAK_DEFAULTS.demoTier],
-    firstName: 'Angela', name: 'Angela', avatar: 'A',
+    firstName: '', name: 'Guest', avatar: '?',
   }));
   const [diagResult, setDiagResult] = useState(null);
   const [quizResult, setQuizResult] = useState(null);
@@ -177,7 +177,7 @@ function App() {
 
   const screens = {
     'landing': <LandingScreen goNav={goNav} />,
-    'login': <LoginScreen goNav={goNav} />,
+    'login': <LoginScreen goNav={goNav} setDemo={setDemo} />,
     'diagnostic-intro': <DiagnosticIntro goNav={goNav} />,
     'diagnostic': <DiagnosticScreen goNav={goNav} setDiagResult={setDiagResult} />,
     'diagnostic-result': <DiagnosticResult goNav={goNav} result={diagResult} setDemo={setDemo} />,

@@ -80,14 +80,17 @@ function LandingScreen({ goNav }) {
   );
 }
 
-function LoginScreen({ goNav }) {
+function LoginScreen({ goNav, setDemo }) {
   const [stage, setStage] = useStateL('idle'); // idle, signing, done
   const [email, setEmail] = useStateL('angela.lin@gmail.com');
 
   const begin = () => {
     setStage('signing');
     setTimeout(() => setStage('done'), 1400);
-    setTimeout(() => goNav('dashboard'), 2400);
+    setTimeout(() => {
+      setDemo?.(d => ({ ...d, firstName: 'Angela', name: 'Angela', avatar: 'A' }));
+      goNav('dashboard');
+    }, 2400);
   };
 
   return (
