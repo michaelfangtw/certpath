@@ -89,6 +89,12 @@ All state lives in the root `App` component in `TOEIC Golden Certs.html`.
 | `pointsFloater` | object\|null | `{ amount, label, key }` for the flying +PTS animation |
 | `confetti` | number | Timestamp; non-zero triggers `ConfettiBurst` |
 | `coachOpen` | boolean | `CoachChat` overlay open/closed |
+| `aiScenario` | object\|null | Selected AI conversation scenario; passed to `AIConversationRunner` |
+| `shadowingSet` | object\|null | Selected shadowing set; passed to `ShadowingRunner` |
+| `showDailyGate` | boolean | Whether the `DailyQuestGate` overlay is visible |
+| `behindAlertOpen` | boolean | Whether the `BehindScheduleAlert` overlay is open |
+| `scheduleAdjusted` | object\|null | Tracks whether the behind-schedule adjustment has been applied (prevents re-trigger) |
+| `activeGame` | string\|null | Key of the currently active mini-game (`'word-match'`, `'sound-pop'`, `'word-order'`) |
 
 ---
 
