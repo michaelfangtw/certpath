@@ -79,7 +79,7 @@ public symbols onto `window`.
 | `js/screens-extras.jsx` | `LeaderboardScreen` `ShopScreen` |
 | `js/screens-ai-conversation.jsx` | `AIConversationCenter` `AIConversationRunner` |
 | `js/screens-behind-alert.jsx` | `BehindScheduleAlert` |
-| `js/cute-style.jsx` | `CuteBgDecor` `LeoFloater` |
+| `js/cute-style.jsx` | `LeoMascot` `CuteBgDecor` `LeoFloater` |
 | `js/screens-games.jsx` | `GameHub` `WordMatchGame` `SoundPopGame` `WordOrderGame` |
 | `js/screens-path.jsx` | `LearningPathScreen` |
 | `js/screens-shadowing.jsx` | `ShadowingHub` `ShadowingRunner` |
