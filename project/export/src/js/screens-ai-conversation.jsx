@@ -7,6 +7,8 @@ const AI_SCENARIOS = [
     title: '商務會議簡報',
     desc: '向團隊匯報季度成果，回應主管提問',
     level: 'gold', turns: 6,
+    tip: '結構：數字 → 原因 → 下一步。多益口說評分重視具體數據與行動計畫。',
+    hints: ['Sure. The numbers show…', 'Our main challenge has been…', 'To address this, we plan to…', 'I\'d like to highlight that…'],
     opening: 'Good morning everyone. Thanks for joining today\'s Q3 review. Could you walk us through the key revenue numbers and any blockers your team is facing?',
     sampleResponses: [
       'Sure. Q3 revenue grew 12% year-over-year, mainly driven by enterprise renewals. Our main blocker is the delayed product launch, which pushed two large deals into Q4.',
@@ -25,6 +27,8 @@ const AI_SCENARIOS = [
     title: '飯店入住',
     desc: '與櫃台人員應對 — Check-in、需求、抱怨',
     level: 'blue', turns: 5,
+    tip: '使用「Could you…?」或「I\'d appreciate it if…」禮貌提出需求，說明具體細節。',
+    hints: ['I have a reservation under…', 'Could you upgrade me to…?', 'I\'d prefer a room with…', 'Is breakfast included?'],
     opening: 'Welcome to The Grand Plaza. May I have your name and reservation details, please?',
     sampleResponses: [
       'Hi, I have a reservation under Wang. Three nights, checking out on Friday.',
@@ -43,6 +47,8 @@ const AI_SCENARIOS = [
     title: '工作面試',
     desc: '英文面試 — 自我介紹、強項、薪資協商',
     level: 'gold', turns: 7,
+    tip: '用 STAR 法：Situation → Task → Action → Result。先說背景，再講具體成果。',
+    hints: ['In my previous role, I…', 'One example of this is…', 'The outcome was…', 'What I learned from that was…'],
     opening: 'Thanks for coming in today. Let\'s start with a brief introduction — could you tell me about yourself and what brings you to this role?',
     sampleResponses: [
       'I\'m a marketing specialist with five years of experience in B2B SaaS. I\'m drawn to your role because of your focus on data-driven growth.',
@@ -62,6 +68,8 @@ const AI_SCENARIOS = [
     title: '餐廳訂位點餐',
     desc: '電話訂位、菜單詢問、特殊需求',
     level: 'green', turns: 5,
+    tip: '說清楚人數、時間和飲食限制，展現溝通完整性。可問「Do you have…?」確認細節。',
+    hints: ['I\'d like to make a reservation for…', 'Could we get a table by…?', 'One of us is…', 'Do you have anything…?'],
     opening: 'Bistro Lumière, this is Marcus. How may I help you today?',
     sampleResponses: [
       'Hi, I\'d like to make a reservation for two at 7 PM this Saturday.',
@@ -80,6 +88,8 @@ const AI_SCENARIOS = [
     title: '機場海關 + 轉機',
     desc: '入境問答、行李、轉機詢問',
     level: 'blue', turns: 4,
+    tip: '海關問答要簡潔直接。遞件時說「Here you go」，主動說明停留目的。',
+    hints: ['I\'m here for…', 'I\'m staying for…', 'I have a connecting flight to…', 'Do I need to fill out…?'],
     opening: 'Welcome to San Francisco. May I see your passport and customs declaration form, please?',
     sampleResponses: [
       'Sure, here you go. I\'m here for a business conference.',
@@ -98,6 +108,8 @@ const AI_SCENARIOS = [
     title: '電梯簡報 (Elevator Pitch)',
     desc: '60 秒推銷你自己 / 你的產品',
     level: 'gold', turns: 4,
+    tip: '公式：Hook → 問題 → 解法 → 成效。開頭用數字或反問抓住注意力。',
+    hints: ['We\'re building…', 'The problem we solve is…', 'Our traction so far is…', 'What we\'re looking for is…'],
     opening: 'Hey, I heard you\'re working on something interesting. We\'ve got about 60 seconds before my next meeting — what\'s the pitch?',
     sampleResponses: [
       'We\'re building an AI-powered TOEIC platform that personalizes practice based on real-time weakness detection. Students improve 30% faster than with traditional prep.',
@@ -507,17 +519,12 @@ function AIConversationRunner({ goNav, demo, scenario, onComplete, firePoints, f
 
           <div style={{ padding: 14, background: 'var(--paper-muted)', borderRadius: 10,
                         marginBottom: 16, fontSize: 12, color: 'var(--ink-muted)', lineHeight: 1.7 }}>
-            💡 試著用 <strong style={{ color: 'var(--ink)' }}>主題句 + 1-2 個支持句</strong>。多益口說評分喜歡看到具體例子。
+            💡 {scenario.tip}
           </div>
 
           <Eyebrow color="var(--ink-muted)" style={{ marginBottom: 8 }}>建議句型</Eyebrow>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 24 }}>
-            {[
-              'Sure, let me walk you through…',
-              'The key takeaway is…',
-              'For example, …',
-              'I\'d like to highlight that…',
-            ].map((p, i) => (
+            {scenario.hints.map((p, i) => (
               <button key={i} onClick={() => setDraft(d => d ? `${d} ${p}` : p)} style={{
                 padding: '8px 12px', textAlign: 'left',
                 background: 'var(--paper-card)', border: '1px solid var(--border)',
