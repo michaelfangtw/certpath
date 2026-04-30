@@ -1,4 +1,4 @@
-// Shared shell pieces — Navbar, ToastFloater, ConfettiBurst, AudioPlayer
+// Shared shell pieces — Navbar, ToastFloater, AudioPlayer
 const { useState: useStateS, useEffect: useEffectS, useRef: useRefS } = React;
 
 function Navbar({ current = 'dashboard', onNav, demo, dark }) {

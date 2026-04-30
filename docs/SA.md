@@ -88,7 +88,7 @@ All state lives in the root `App` component in `TOEIC Golden Certs.html`.
 | `quizResult` | object\|null | Last quiz result; passed to `QuizResult` screen |
 | `showSignIn` | boolean | Whether to show the daily sign-in reward modal |
 | `pointsFloater` | object\|null | `{ amount, label, key }` for the flying +PTS animation |
-| `confetti` | number | Timestamp; non-zero triggers `ConfettiBurst` |
+| `confetti` | number | Timestamp; non-zero triggers `ConfettiBurst` (component defined inline in `TOEIC Golden Certs.html`, not in any external JSX file) |
 | `coachOpen` | boolean | `CoachChat` overlay open/closed |
 | `aiScenario` | object\|null | Selected AI conversation scenario; passed to `AIConversationRunner` |
 | `shadowingSet` | object\|null | Selected shadowing set; passed to `ShadowingRunner` |
