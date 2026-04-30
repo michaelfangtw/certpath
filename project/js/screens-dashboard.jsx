@@ -209,7 +209,8 @@ function SectionHeader({ title, eyebrow, right }) {
 }
 
 function CountdownCard({ days }) {
-  const urgent = days <= 30;
+  const hasDate = days != null;
+  const urgent = hasDate && days <= 30;
   return (
     <PaperCard accent="top-terra" style={{ position: 'relative', overflow: 'hidden',
                                             background: urgent ? 'linear-gradient(135deg, var(--terra-05), var(--paper-card))' : 'var(--paper-card)' }}>
@@ -217,20 +218,28 @@ function CountdownCard({ days }) {
         <Icon name="flag" size={70} stroke={1} />
       </div>
       <Eyebrow style={{ marginBottom: 8 }}>距離考試</Eyebrow>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
-        <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 56,
-                      color: urgent ? 'var(--terra)' : 'var(--ink)', lineHeight: 1,
-                      fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em' }}>
-          {days}
+      {hasDate ? (
+        <>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
+            <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 56,
+                          color: urgent ? 'var(--terra)' : 'var(--ink)', lineHeight: 1,
+                          fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em' }}>
+              {days}
+            </div>
+            <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 900, fontSize: 14,
+                          color: 'var(--ink-muted)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+              DAYS
+            </div>
+          </div>
+        </>
+      ) : (
+        <div style={{ marginTop: 12 }}>
+          <div style={{ fontSize: 14, color: 'var(--ink-muted)', marginBottom: 12 }}>尚未設定考試日</div>
+          <Button variant="outline" style={{ fontSize: 12, padding: '6px 14px' }}>
+            <Icon name="flag" size={12} /> 設定考試日期
+          </Button>
         </div>
-        <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 900, fontSize: 14,
-                      color: 'var(--ink-muted)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-          DAYS
-        </div>
-      </div>
-      <div style={{ fontSize: 11, color: 'var(--ink-muted)', marginTop: 8, fontStyle: 'italic' }}>
-        2026 年 6 月 14 日 · 09:30 場次
-      </div>
+      )}
     </PaperCard>
   );
 }
@@ -260,7 +269,7 @@ function CoachAlert({ demo, openCoach }) {
           </h3>
           <p style={{ color: 'var(--ink-muted)', fontSize: 14, marginTop: 6 }}>
             今日完成 <strong style={{ color: 'var(--ink)' }}>3</strong> 題。
-            剩餘 <strong style={{ color: 'var(--ink)' }}>{demo.daysLeft}</strong> 天，
+            剩餘 <strong style={{ color: 'var(--ink)' }}>{demo.daysLeft ?? '—'}</strong> 天，
             建議每日練至 <span style={{ color: 'var(--terra)', fontWeight: 900,
               textDecoration: 'underline', textDecorationThickness: 2, textUnderlineOffset: 4 }}>{need}</span> 題。
           </p>
