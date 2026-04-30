@@ -262,36 +262,4 @@ const QUIZ_PARTS = [
     explain: '"Welcome aboard"、"flying time" 都是空服員機上廣播常用語，故選 (B)。' },
 ];
 
-// Friends/classmates pool — used to surface the "person just ahead" catch-up alert.
-// Scores are spaced so almost any demo.points value has a believable rival ~30-200 PTS ahead.
-const RIVALS = [
-  { name: 'Sarah Wu',     avatar: 'S', tier: 'gold',  rank: 2  },
-  { name: 'David Chen',   avatar: 'D', tier: 'gold',  rank: 3  },
-  { name: 'Hsiao-Mei Lo', avatar: 'H', tier: 'blue',  rank: 4  },
-  { name: 'Ken Yamamoto', avatar: 'K', tier: 'blue',  rank: 5  },
-  { name: 'Wang Y.',      avatar: 'W', tier: 'green', rank: 6  },
-  { name: 'Hu R.',        avatar: 'H', tier: 'green', rank: 7  },
-  { name: 'Chiu T.',      avatar: 'C', tier: 'green', rank: 8  },
-  { name: 'Park J.',      avatar: 'P', tier: 'green', rank: 9  },
-  { name: 'Kim S.',       avatar: 'K', tier: 'green', rank: 10 },
-  { name: 'Tanaka R.',    avatar: 'T', tier: 'green', rank: 11 },
-];
-
-// Returns the closest rival above the user, plus the gap.
-function findRival(myPoints, myRank = 12) {
-  // Generate scores for ranks 11→2 that sit just above myPoints, with growing gaps.
-  // Tight at first (rank 11 ≈ +60 PTS), bigger at top (rank 2 ≈ +1500 PTS).
-  const gaps = [60, 130, 220, 320, 460, 640, 870, 1180, 1500, 1900];
-  const enriched = RIVALS.map((r, i) => {
-    // RIVALS is rank 2..11 (10 items). We want closest = rank above me first.
-    // Rank order: index 0 is rank 2, index 9 is rank 11. Reverse to nearest-first.
-    const distFromMe = (myRank - 1) - r.rank; // rank 11 → 0, rank 10 → 1, ...
-    return { ...r, score: myPoints + (gaps[distFromMe] || 100) };
-  });
-  // Sort ascending by score so the closest above me is first.
-  const sorted = [...enriched].sort((a, b) => a.score - b.score);
-  const ahead = sorted[0];
-  return { ...ahead, gap: ahead.score - myPoints };
-}
-
-Object.assign(window, { DIAGNOSTIC, SAMPLE_QUIZ, QUIZ_PARTS, scaleListening, scaleReading, DEMO_TIERS, LEADERBOARD, COACH_GREETINGS, RIVALS, findRival });
+Object.assign(window, { DIAGNOSTIC, SAMPLE_QUIZ, QUIZ_PARTS, scaleListening, scaleReading, DEMO_TIERS, LEADERBOARD, COACH_GREETINGS });

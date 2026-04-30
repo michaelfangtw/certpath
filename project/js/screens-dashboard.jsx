@@ -3,14 +3,18 @@ const { useState: useStateDb, useEffect: useEffectDb } = React;
 
 function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
   const cert = TIER[theme || demo.tier];
-  const rival = findRival(demo.points || 0, 12);
+  const myPoints = demo.points || 0;
+  const rivalEntry = [...LEADERBOARD]
+    .filter(u => u.score > myPoints)
+    .sort((a, b) => a.score - b.score)[0] || null;
+  const rival = rivalEntry ? { ...rivalEntry, gap: rivalEntry.score - myPoints } : null;
   return (
     <div style={{ minHeight: '100vh', background: dark ? '#1a1612' : 'var(--paper-base)' }}>
       <Navbar current="dashboard" onNav={goNav} demo={demo} dark={dark} />
 
       <main style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px 80px' }}>
-        {/* Catch-up alert — show when rival is within 200 PTS */}
-        {rival.gap <= 200 && (
+        {/* Catch-up alert — show when a real leaderboard rival is within 200 PTS */}
+        {rival && rival.gap <= 200 && (
           <CatchUpBanner rival={rival} demo={demo} dark={dark} goNav={goNav} />
         )}
 
