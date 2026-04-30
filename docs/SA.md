@@ -71,6 +71,7 @@ public symbols onto `window`.
 | `js/screens-games.jsx` | `GameHub` `WordMatchGame` `SoundPopGame` `WordOrderGame` |
 | `js/screens-path.jsx` | `LearningPathScreen` |
 | `js/screens-shadowing.jsx` | `ShadowingHub` `ShadowingRunner` |
+| `js/screens-daily-quest.jsx` | `DailyQuestGate` `DailyQuestHub` `DailyQuestRunner` |
 
 ---
 
@@ -137,6 +138,7 @@ Routes are simulated via the `route` state string; no URL router is used in the 
 | `shadowing-run` | Shadowing session | `ShadowingRunner` |
 | `daily-quest` | Daily quest hub | `DailyQuestHub` |
 | `daily-quest-run` | Daily quest session | `DailyQuestRunner` |
+| *(overlay)* | Daily quest gate modal | `DailyQuestGate` — not a route; rendered conditionally via `showDailyGate` state |
 | `games` | Game hub | `GameHub` |
 | `game-play` | Active mini-game | `WordMatchGame` / `SoundPopGame` / `WordOrderGame` |
 | `path` | Learning path tree | `LearningPathScreen` |
