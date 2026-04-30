@@ -80,6 +80,17 @@ test('next-question button replaces submit button after reveal', async ({ page }
   await expect(page.getByRole('button', { name: '送出答案' })).not.toBeVisible();
 });
 
+// ── Bug 3: Part 1 badge must show 聽力 (listening), not 閱讀 ────────────────
+
+test('Part 1 quiz badge shows 聽力 not 閱讀', async ({ page }) => {
+  await goToQuiz(page);
+
+  // Q0a has skill:'listening' — badge must read "Part 1 · 聽力"
+  const badge = page.locator('span', { hasText: 'Part 1' }).first();
+  await expect(badge).toContainText('聽力');
+  await expect(badge).not.toContainText('閱讀');
+});
+
 // ── Bug 2: Part 1 photos are distinct per question ───────────────────────────
 
 test('first Part 1 question shows meeting-room SVG scene', async ({ page }) => {
