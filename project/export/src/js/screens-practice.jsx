@@ -202,7 +202,7 @@ function QuizScreen({ goNav, demo, setQuizResult }) {
 
       <main style={{ maxWidth: 880, margin: '0 auto', padding: '40px 24px' }}>
         <PaperCard key={q.id} style={{ padding: 40, animation: 'slideUp 300ms var(--ease-out) both' }}>
-          {q.part === 1 && <Part1Photo />}
+          {q.part === 1 && <Part1Photo kind={q.photo?.kind} />}
           {q.skill === 'listening' && <AudioPlayer transcript={q.audio} />}
           {q.skill === 'listening' && q.question && (
             <p style={{ fontSize: 17, fontWeight: 700, marginTop: 28 }}>{q.question}</p>

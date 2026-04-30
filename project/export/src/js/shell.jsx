@@ -222,8 +222,85 @@ function AudioPlayer({ transcript = '', onPlay }) {
   );
 }
 
-// Photo placeholder for Part 1 (since no real images)
+const _P1_SCENES = {
+  'desk-laptop': (
+    <>
+      <rect width="400" height="225" fill="#EDF2F7"/>
+      <rect width="400" height="145" fill="#E2E8F0"/>
+      <rect x="290" y="20" width="80" height="60" rx="3" fill="#BEE3F8" stroke="#90CDF4" strokeWidth="2"/>
+      <line x1="330" y1="20" x2="330" y2="80" stroke="#90CDF4" strokeWidth="1.5"/>
+      <line x1="290" y1="50" x2="370" y2="50" stroke="#90CDF4" strokeWidth="1.5"/>
+      <rect x="30" y="140" width="340" height="12" rx="2" fill="#C4A882"/>
+      <rect x="30" y="150" width="340" height="70" fill="#B8956F"/>
+      <rect x="80" y="118" width="130" height="24" rx="3" fill="#718096"/>
+      <rect x="85" y="75" width="120" height="46" rx="3" fill="#2D3748"/>
+      <rect x="90" y="80" width="110" height="36" rx="1" fill="#4A5568"/>
+      <rect x="95" y="85" width="70" height="3" rx="1" fill="#63B3ED" opacity="0.8"/>
+      <rect x="95" y="92" width="50" height="2" rx="1" fill="#A0AEC0" opacity="0.6"/>
+      <rect x="95" y="98" width="60" height="2" rx="1" fill="#A0AEC0" opacity="0.5"/>
+      <rect x="85" y="121" width="120" height="3" rx="1" fill="#4A5568"/>
+      <circle cx="270" cy="108" r="18" fill="#C6937A"/>
+      <rect x="250" y="124" width="40" height="50" rx="4" fill="#5A67D8"/>
+      <rect x="225" y="140" width="40" height="10" rx="4" fill="#C6937A"/>
+      <rect x="240" y="125" width="14" height="16" rx="2" fill="#fff" stroke="#CBD5E0"/>
+      <ellipse cx="247" cy="125" rx="7" ry="3" fill="#E2E8F0"/>
+      <text x="200" y="215" textAnchor="middle" fontFamily="sans-serif" fontSize="10" fill="#718096">
+        Part 1 · Office scene
+      </text>
+    </>
+  ),
+  'meeting-room': (
+    <>
+      <rect width="400" height="225" fill="#F0FFF4"/>
+      <rect width="400" height="130" fill="#E6FFFA"/>
+      <rect x="120" y="15" width="160" height="80" rx="3" fill="#fff" stroke="#B2F5EA" strokeWidth="2"/>
+      <rect x="126" y="21" width="148" height="68" fill="#F0FFFD"/>
+      <line x1="135" y1="35" x2="200" y2="35" stroke="#81E6D9" strokeWidth="1.5"/>
+      <line x1="135" y1="45" x2="220" y2="45" stroke="#81E6D9" strokeWidth="1.5"/>
+      <line x1="135" y1="55" x2="185" y2="55" stroke="#81E6D9" strokeWidth="1.5"/>
+      <ellipse cx="200" cy="165" rx="130" ry="42" fill="#D4A96A" stroke="#B7813A" strokeWidth="2"/>
+      <ellipse cx="200" cy="165" rx="110" ry="30" fill="#DEB887"/>
+      <rect x="100" y="118" width="30" height="22" rx="4" fill="#4A5568"/>
+      <rect x="170" y="115" width="30" height="22" rx="4" fill="#4A5568"/>
+      <rect x="240" y="115" width="30" height="22" rx="4" fill="#4A5568"/>
+      <circle cx="115" cy="112" r="10" fill="#F6AD55"/>
+      <circle cx="185" cy="109" r="10" fill="#68D391"/>
+      <circle cx="255" cy="109" r="10" fill="#63B3ED"/>
+      <rect x="155" y="200" width="30" height="22" rx="4" fill="#4A5568"/>
+      <rect x="215" y="200" width="30" height="22" rx="4" fill="#4A5568"/>
+      <text x="200" y="218" textAnchor="middle" fontFamily="sans-serif" fontSize="10" fill="#718096">
+        Part 1 · Conference room
+      </text>
+    </>
+  ),
+  'reception': (
+    <>
+      <rect width="400" height="225" fill="#FFFAF0"/>
+      <rect width="400" height="135" fill="#FEF3C7"/>
+      <rect x="140" y="20" width="120" height="30" rx="4" fill="#D97706"/>
+      <rect x="148" y="27" width="104" height="16" rx="2" fill="#FCD34D"/>
+      <rect x="40" y="135" width="320" height="55" rx="4" fill="#D4A96A"/>
+      <rect x="40" y="130" width="320" height="12" rx="2" fill="#B7813A"/>
+      <rect x="200" y="95" width="70" height="40" rx="3" fill="#2D3748"/>
+      <rect x="206" y="100" width="58" height="30" fill="#4A5568"/>
+      <rect x="225" y="134" width="20" height="5" rx="1" fill="#4A5568"/>
+      <circle cx="160" cy="108" r="16" fill="#C6937A"/>
+      <rect x="144" y="122" width="32" height="20" rx="3" fill="#E53E3E"/>
+      <rect x="330" y="115" width="14" height="22" rx="2" fill="#744210"/>
+      <circle cx="337" cy="110" r="14" fill="#48BB78"/>
+      <circle cx="325" cy="118" r="10" fill="#38A169"/>
+      <rect x="50" y="185" width="28" height="20" rx="3" fill="#718096"/>
+      <rect x="88" y="185" width="28" height="20" rx="3" fill="#718096"/>
+      <circle cx="64" cy="180" r="9" fill="#F6AD55"/>
+      <text x="200" y="215" textAnchor="middle" fontFamily="sans-serif" fontSize="10" fill="#718096">
+        Part 1 · Reception area
+      </text>
+    </>
+  ),
+};
+
 function Part1Photo({ kind = 'desk-laptop' }) {
+  const scene = _P1_SCENES[kind] || _P1_SCENES['desk-laptop'];
   return (
     <div style={{
       width: '100%', aspectRatio: '16/9', background: 'var(--paper-muted)',
@@ -232,16 +309,7 @@ function Part1Photo({ kind = 'desk-laptop' }) {
       position: 'relative', marginBottom: 24,
     }}>
       <svg viewBox="0 0 400 225" style={{ width: '100%', height: '100%' }}>
-        <rect width="400" height="225" fill="#EEE9E6"/>
-        {/* Simple desk scene illustration */}
-        <rect x="20" y="160" width="360" height="50" fill="#D9D1C9" />
-        <rect x="60" y="120" width="120" height="50" rx="4" fill="#fff" stroke="#A9A39C" strokeWidth="1.5" />
-        <rect x="68" y="128" width="104" height="34" rx="2" fill="#2D2926" />
-        <circle cx="240" cy="140" r="20" fill="#AF4C2F"/>
-        <rect x="220" y="155" width="40" height="60" rx="4" fill="#AF4C2F" opacity="0.7"/>
-        <rect x="280" y="135" width="60" height="20" rx="2" fill="#fff" stroke="#A9A39C"/>
-        <text x="200" y="40" textAnchor="middle" fontFamily="var(--font-serif)" fontSize="11"
-              fontStyle="italic" fill="#A9A39C">Photo · Q1 Part 1 illustration</text>
+        {scene}
       </svg>
     </div>
   );
