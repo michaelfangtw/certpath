@@ -76,19 +76,12 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
 
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 40 }}>
-          <PaperCard accent="top-terra" style={{ position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 8, right: 12, opacity: 0.04 }}>
-              <Icon name="zap" size={80} stroke={1} />
-            </div>
-            <Eyebrow color="var(--ink-muted)">可用點數</Eyebrow>
+          <PaperCard accent="top-terra">
+            <Eyebrow color="var(--ink-muted)">預測 TOEIC</Eyebrow>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 36,
-                          color: 'var(--terra)', lineHeight: 1, marginTop: 12, fontVariantNumeric: 'tabular-nums' }}>
-              {demo.points.toLocaleString()} <span style={{ fontSize: 11, color: 'var(--ink-muted)', letterSpacing: '0.2em' }}>PTS</span>
-            </div>
-            <div style={{ marginTop: 16, padding: 10, background: 'var(--paper-muted)',
-                          borderRadius: 10, fontSize: 11, fontWeight: 700,
-                          display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 14 }}>🔥</span> 連續 <span style={{ color: 'var(--terra)' }}>{demo.streak}</span> 天
+                          color: 'var(--terra)', marginTop: 12, lineHeight: 1 }}>{demo.predicted}</div>
+            <div style={{ color: 'var(--ink-muted)', fontSize: 11, marginTop: 4 }}>
+              聽力 {demo.listening} · 閱讀 {demo.reading}
             </div>
           </PaperCard>
 
@@ -109,12 +102,19 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
             </div>
           </PaperCard>
 
-          <PaperCard style={{ borderTop: '4px solid var(--terra-40)' }}>
-            <Eyebrow color="var(--ink-muted)">預測 TOEIC</Eyebrow>
+          <PaperCard accent="top-terra" style={{ position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 8, right: 12, opacity: 0.04 }}>
+              <Icon name="zap" size={80} stroke={1} />
+            </div>
+            <Eyebrow color="var(--ink-muted)">可用點數</Eyebrow>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 36,
-                          color: 'var(--terra)', marginTop: 12, lineHeight: 1 }}>{demo.predicted}</div>
-            <div style={{ color: 'var(--ink-muted)', fontSize: 11, marginTop: 4 }}>
-              聽力 {demo.listening} · 閱讀 {demo.reading}
+                          color: 'var(--terra)', lineHeight: 1, marginTop: 12, fontVariantNumeric: 'tabular-nums' }}>
+              {demo.points.toLocaleString()} <span style={{ fontSize: 11, color: 'var(--ink-muted)', letterSpacing: '0.2em' }}>PTS</span>
+            </div>
+            <div style={{ marginTop: 16, padding: 10, background: 'var(--paper-muted)',
+                          borderRadius: 10, fontSize: 11, fontWeight: 700,
+                          display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 14 }}>🔥</span> 連續 <span style={{ color: 'var(--terra)' }}>{demo.streak}</span> 天
             </div>
           </PaperCard>
         </div>
