@@ -1,17 +1,6 @@
 // Leaderboard + Shop screens
 const { useState: useStateX, useEffect: useEffectX } = React;
 
-const FALLBACK_SHOP_ITEMS = [
-  { id: 1, icon: '📚', name: '單字書 PDF', desc: 'NEW TOEIC 必考 1500 字', cost: 500, tag: '熱銷' },
-  { id: 2, icon: '🎧', name: '一對一聽力諮詢', desc: '15 分鐘真人教練 Zoom', cost: 1200, tag: '即將推出', comingSoon: true },
-  { id: 3, icon: '⚡', name: '雙倍積分卡', desc: '24 小時內練習積分 x2', cost: 300 },
-  { id: 4, icon: '🔓', name: '解鎖高難度題庫', desc: '金色程度專屬 200 題', cost: 800, tag: '即將推出', comingSoon: true },
-  { id: 5, icon: '🥇', name: '金色頭像邊框', desc: '永久金邊頭框', cost: 1500, tag: '即將推出', comingSoon: true },
-  { id: 6, icon: '☕', name: 'Starbucks 抵用券 NT$100', desc: '完成 30 天連續登入即可兌換', cost: 2500, tag: '即將推出', comingSoon: true },
-  { id: 7, icon: '🎯', name: '錯題分析 AI 報告', desc: '個人化 PDF 弱點分析', cost: 600, tag: '即將推出', comingSoon: true },
-  { id: 8, icon: '⏰', name: '考試提醒服務', desc: '考前 30 天每日推送', cost: 200, tag: '即將推出', comingSoon: true },
-];
-
 function LeaderboardScreen({ goNav, demo, dark }) {
   const [tab, setTab] = useStateX('total');
   const tabs = [
@@ -132,13 +121,37 @@ function LeaderboardScreen({ goNav, demo, dark }) {
   );
 }
 
-function ShopScreen({ goNav, demo, dark, firePoints, setDemo }) {
-  const [items, setItems] = useStateX(FALLBACK_SHOP_ITEMS);
+const STATIC_SHOP_ITEMS = [
+  { id: 1, icon: '📚', name: '單字書 PDF', desc: 'NEW TOEIC 必考 1500 字', cost: 500, tag: '熱銷' },
+  { id: 2, icon: '🎧', name: '一對一聽力諮詢', desc: '15 分鐘真人教練 Zoom', cost: 1200, tag: '即將推出', comingSoon: true },
+  { id: 3, icon: '⚡', name: '雙倍積分卡', desc: '24 小時內練習積分 x2', cost: 300 },
+  { id: 4, icon: '🔓', name: '解鎖高難度題庫', desc: '金色程度專屬 200 題', cost: 800, tag: '即將推出', comingSoon: true },
+  { id: 5, icon: '🥇', name: '金色頭像邊框', desc: '永久金邊頭框', cost: 1500, tag: '即將推出', comingSoon: true },
+  { id: 6, icon: '☕', name: 'Starbucks 抵用券 NT$100', desc: '完成 30 天連續登入即可兌換', cost: 2500, tag: '即將推出', comingSoon: true },
+  { id: 7, icon: '🎯', name: '錯題分析 AI 報告', desc: '個人化 PDF 弱點分析', cost: 600, tag: '即將推出', comingSoon: true },
+  { id: 8, icon: '⏰', name: '考試提醒服務', desc: '考前 30 天每日推送', cost: 200, tag: '即將推出', comingSoon: true },
+];
 
+function ShopScreen({ goNav, demo, dark, firePoints, setDemo }) {
+  const [items, setItems] = useStateX(STATIC_SHOP_ITEMS);
   useEffectX(() => {
-    window.supabaseClient?.fetchShopItems?.().then(remote => {
-      if (remote) setItems(remote);
-    });
+    if (window.supabaseClient?.fetchShopItems) {
+      window.supabaseClient.fetchShopItems().then(remote => { if (remote) setItems(remote); });
+      return;
+    }
+    const sb = window.supabase;
+    if (!sb) return;
+    sb.from('shop_items')
+      .select('id,icon,name,desc,cost,tag,coming_soon')
+      .order('id', { ascending: true })
+      .then(({ data, error }) => {
+        if (error || !data?.length) return;
+        setItems(data.map(r => ({
+          id: r.id, icon: r.icon, name: r.name, desc: r.desc,
+          cost: r.cost, tag: r.tag || undefined,
+          comingSoon: r.coming_soon || false,
+        })));
+      });
   }, []);
 
   const [bought, setBought] = useStateX(() => {
