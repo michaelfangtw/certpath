@@ -229,7 +229,12 @@ function LearningPathScreen({ goNav, demo, dark, openGame }) {
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 280, overflowY: 'auto' }}>
-            {Object.entries(progress).reverse().map(([nodeId, rec]) => {
+            {totalDone === 0 ? (
+              <div style={{ textAlign: 'center', color: 'var(--ink-muted)', fontSize: 13,
+                            padding: '20px 0', fontStyle: 'italic' }}>
+                尚未完成任何站點
+              </div>
+            ) : Object.entries(progress).reverse().map(([nodeId, rec]) => {
               const node = allNodes.find(n => n.id === nodeId);
               if (!node) return null;
               const meta = NODE_TYPE_META[node.type];
