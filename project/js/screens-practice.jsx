@@ -470,12 +470,20 @@ function QuizResult({ goNav, demo, result, setDemo, fireConfetti, firePoints }) 
     }, 600);
     if (setDemo && demo) {
       setTimeout(() => {
-        setDemo(d => ({
-          ...d,
-          points: d.points + (result?.points || 0),
-          completed: d.completed + 1,
-          accuracy: Math.round((d.accuracy * d.completed + acc) / (d.completed + 1)),
-        }));
+        setDemo(d => {
+          const newCompletedToday = (d.completedToday || 0) + 1;
+          try {
+            const today = new Date().toISOString().slice(0, 10);
+            localStorage.setItem('certpath_daily_completed', JSON.stringify({ date: today, count: newCompletedToday }));
+          } catch {}
+          return {
+            ...d,
+            points: d.points + (result?.points || 0),
+            completed: d.completed + 1,
+            completedToday: newCompletedToday,
+            accuracy: Math.round((d.accuracy * d.completed + acc) / (d.completed + 1)),
+          };
+        });
       }, 1800);
     }
   }, []);
