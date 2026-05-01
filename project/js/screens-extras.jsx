@@ -124,13 +124,13 @@ function LeaderboardScreen({ goNav, demo, dark }) {
 function ShopScreen({ goNav, demo, dark, firePoints, setDemo }) {
   const items = [
     { id: 1, icon: '📚', name: '單字書 PDF', desc: 'NEW TOEIC 必考 1500 字', cost: 500, tag: '熱銷' },
-    { id: 2, icon: '🎧', name: '一對一聽力諮詢', desc: '15 分鐘真人教練 Zoom', cost: 1200, tag: '尊榮' },
+    { id: 2, icon: '🎧', name: '一對一聽力諮詢', desc: '15 分鐘真人教練 Zoom', cost: 1200, tag: '即將推出', comingSoon: true },
     { id: 3, icon: '⚡', name: '雙倍積分卡', desc: '24 小時內練習積分 x2', cost: 300 },
-    { id: 4, icon: '🔓', name: '解鎖高難度題庫', desc: '金色程度專屬 200 題', cost: 800, tag: '推薦' },
-    { id: 5, icon: '🥇', name: '金色頭像邊框', desc: '永久金邊頭框', cost: 1500, tag: '限量' },
-    { id: 6, icon: '☕', name: 'Starbucks 抵用券 NT$100', desc: '完成 30 天連續登入即可兌換', cost: 2500, tag: '實體' },
-    { id: 7, icon: '🎯', name: '錯題分析 AI 報告', desc: '個人化 PDF 弱點分析', cost: 600 },
-    { id: 8, icon: '⏰', name: '考試提醒服務', desc: '考前 30 天每日推送', cost: 200 },
+    { id: 4, icon: '🔓', name: '解鎖高難度題庫', desc: '金色程度專屬 200 題', cost: 800, tag: '即將推出', comingSoon: true },
+    { id: 5, icon: '🥇', name: '金色頭像邊框', desc: '永久金邊頭框', cost: 1500, tag: '即將推出', comingSoon: true },
+    { id: 6, icon: '☕', name: 'Starbucks 抵用券 NT$100', desc: '完成 30 天連續登入即可兌換', cost: 2500, tag: '即將推出', comingSoon: true },
+    { id: 7, icon: '🎯', name: '錯題分析 AI 報告', desc: '個人化 PDF 弱點分析', cost: 600, tag: '即將推出', comingSoon: true },
+    { id: 8, icon: '⏰', name: '考試提醒服務', desc: '考前 30 天每日推送', cost: 200, tag: '即將推出', comingSoon: true },
   ];
 
   const [bought, setBought] = useStateX(new Set());
@@ -188,10 +188,10 @@ function ShopScreen({ goNav, demo, dark, firePoints, setDemo }) {
                                 color: canAfford ? 'var(--terra)' : 'var(--ink-faint)' }}>
                     {item.cost.toLocaleString()} <span style={{ fontSize: 9 }}>PTS</span>
                   </div>
-                  <Button variant={owned ? 'ghost' : canAfford ? 'primary' : 'outline'}
-                          onClick={() => buy(item)} disabled={owned || !canAfford}
+                  <Button variant={owned ? 'ghost' : item.comingSoon ? 'outline' : canAfford ? 'primary' : 'outline'}
+                          onClick={() => buy(item)} disabled={owned || item.comingSoon || !canAfford}
                           style={{ fontSize: 11, padding: '6px 12px' }}>
-                    {owned ? '已兌換 ✓' : canAfford ? '兌換' : '點數不足'}
+                    {owned ? '已兌換 ✓' : item.comingSoon ? '即將推出' : canAfford ? '兌換' : '點數不足'}
                   </Button>
                 </div>
               </PaperCard>
