@@ -76,7 +76,7 @@ public symbols onto `window`.
 | `js/shell.jsx` | `Navbar` `PointsFloater` `DailySignInModal` `AudioPlayer` `Part1Photo` |
 | `js/screens-landing.jsx` | `LandingScreen` `LoginScreen` |
 | `js/screens-diagnostic.jsx` | `DiagnosticIntro` `DiagnosticScreen` `DiagnosticResult` `RadarChartAnimated` |
-| `js/screens-dashboard.jsx` | `DashboardScreen` `CoachChat` `CatchUpBanner` |
+| `js/screens-dashboard.jsx` | `DashboardScreen` `CoachChat` `CatchUpBanner` `SectionHeader` |
 | `js/screens-practice.jsx` | `PracticeCenter` `QuizScreen` `QuizResult` |
 | `js/screens-extras.jsx` | `LeaderboardScreen` `ShopScreen` |
 | `js/screens-ai-conversation.jsx` | `AIConversationCenter` `AIConversationRunner` |
