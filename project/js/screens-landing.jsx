@@ -72,6 +72,7 @@ function LandingScreen({ goNav }) {
       <footer style={{ borderTop: '1px solid var(--border)', padding: '32px 24px', textAlign: 'center',
                        color: 'var(--ink-muted)', fontSize: 13, marginTop: 64 }}>
         © 2026 TOEIC Certs Game · 預測分數僅供參考，實際成績以 ETS 官方考試為準
+        <span style={{ marginLeft: 16, opacity: 0.5 }}>{window.APP_VERSION || ''}</span>
       </footer>
     </div>
   );
