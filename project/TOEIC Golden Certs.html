@@ -233,7 +233,7 @@ function App() {
 
       <ConfettiBurst trigger={confetti} />
 
-      <CoachChat open={coachOpen} onClose={() => setCoachOpen(false)} />
+      <CoachChat open={coachOpen} onClose={() => setCoachOpen(false)} demo={demo} />
 
       <CuteBgDecor enabled={tweaks.vibe === 'cute' && route !== 'landing' && route !== 'login'} />
       <LeoFloater enabled={tweaks.vibe === 'cute' && route !== 'landing' && route !== 'login' && route !== 'game-play' && !coachOpen} onClick={() => setCoachOpen(true)} />

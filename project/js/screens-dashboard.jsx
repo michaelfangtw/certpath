@@ -471,10 +471,24 @@ function LeaderboardMini() {
 }
 
 // AI Coach chat overlay
-function CoachChat({ open, onClose }) {
+function CoachChat({ open, onClose, demo }) {
+  const RADAR_DIMS = ['聽力', '文法', '推論', '細節', '速度'];
+  const RADAR_COACH_MSGS = [
+    '我注意到你的聽力分數有進步空間，建議今天先從 Part 3 三題開始練習。',
+    '文法題型是你目前的弱點，今天集中練 Part 5 單句填空如何？',
+    '推論類題你可以再加強，多練 Part 7 多重文本推論。',
+    '細節掌握是你的弱點，試試 Part 6 段落填空提升閱讀專注力。',
+    '你的答題速度可以再提升，計時練習 + 略讀策略能大幅改善。',
+  ];
+  const initMsg = (() => {
+    if (!demo?.radar?.length) return '今天想練聽力還是閱讀？有什麼我可以幫你的嗎？';
+    const minVal = Math.min(...demo.radar);
+    const weakIdx = demo.radar.indexOf(minVal);
+    return RADAR_COACH_MSGS[weakIdx] || '今天想練聽力還是閱讀？';
+  })();
   const [msgs, setMsgs] = useStateDb([
     { role: 'bot', text: '哈囉！我是你的 AI 多益教練 🤖' },
-    { role: 'bot', text: '我注意到你最近 Part 2 的間接回答正確率只有 60%，要不要從這裡開始加強？' },
+    { role: 'bot', text: initMsg },
   ]);
   const [draft, setDraft] = useStateDb('');
 
