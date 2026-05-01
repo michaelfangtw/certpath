@@ -1,6 +1,15 @@
 // Dashboard with all the new features
 const { useState: useStateDb, useEffect: useEffectDb } = React;
 
+const DAILY_MISSION_GAMES = 3;
+const DAILY_MISSION_POINTS = 100;
+const DAILY_MISSION_STREAK_BONUS = 50;
+const DAILY_MISSION_STREAK_DAYS = 3;
+const DAILY_MISSION_MINUTES = 5;
+const REWARD_PRACTICE_PTS = 200;
+const REWARD_SPEAKING_PTS = 150;
+const REWARD_DAILY_MISSION_PTS = 300;
+
 function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
   const cert = TIER[theme || demo.tier];
   const myPoints = demo.points || 0;
@@ -58,13 +67,13 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
               開始今日小遊戲 →
             </div>
             <div style={{ fontSize: 14, opacity: 0.95, marginTop: 8, fontWeight: 600 }}>
-              3 款迷你遊戲輪播 · 通關 +100 PTS · 連 3 天再 +50 連勝獎
+              {DAILY_MISSION_GAMES} 款迷你遊戲輪播 · 通關 +{DAILY_MISSION_POINTS} PTS · 連 {DAILY_MISSION_STREAK_DAYS} 天再 +{DAILY_MISSION_STREAK_BONUS} 連勝獎
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
             <div style={{ background: 'rgba(255,255,255,0.25)', padding: '6px 14px', borderRadius: 9999,
                            fontSize: 11, fontWeight: 900, letterSpacing: '0.1em' }}>
-              5 分鐘 · 隨時可玩
+              {DAILY_MISSION_MINUTES} 分鐘 · 隨時可玩
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, opacity: 0.9 }}>還沒挑戰 ⏰</div>
           </div>
@@ -399,7 +408,7 @@ function CatchUpBanner({ rival, demo, dark, goNav }) {
           {' '}的第 <strong>{rival.rank}</strong> 名！
         </div>
         <div style={{ fontSize: 12, color: dark ? '#A9A39C' : 'var(--ink-muted)', marginTop: 4 }}>
-          一場練習 +200 PTS · 一輪口說 +150 PTS · 完成今日任務 +300 PTS — 衝過去 🔥
+          一場練習 +{REWARD_PRACTICE_PTS} PTS · 一輪口說 +{REWARD_SPEAKING_PTS} PTS · 完成今日任務 +{REWARD_DAILY_MISSION_PTS} PTS — 衝過去 🔥
         </div>
       </div>
       <Button variant="primary" icon="arrowRight"
