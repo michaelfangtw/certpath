@@ -133,10 +133,19 @@ function ShopScreen({ goNav, demo, dark, firePoints, setDemo }) {
     { id: 8, icon: '⏰', name: '考試提醒服務', desc: '考前 30 天每日推送', cost: 200, tag: '即將推出', comingSoon: true },
   ];
 
-  const [bought, setBought] = useStateX(new Set());
+  const [bought, setBought] = useStateX(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('certpath_purchases') || '[]');
+      return new Set(saved);
+    } catch { return new Set(); }
+  });
   const buy = (item) => {
-    if (demo.points < item.cost || bought.has(item.id)) return;
-    setBought(s => new Set([...s, item.id]));
+    if (demo.points < item.cost || bought.has(item.id) || item.comingSoon) return;
+    setBought(s => {
+      const next = new Set([...s, item.id]);
+      try { localStorage.setItem('certpath_purchases', JSON.stringify([...next])); } catch {}
+      return next;
+    });
     setDemo?.(d => ({ ...d, points: d.points - item.cost }));
     firePoints?.(-item.cost, '已兌換');
   };
