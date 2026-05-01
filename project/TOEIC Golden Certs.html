@@ -137,11 +137,28 @@ function App() {
   const [behindAlertOpen, setBehindAlertOpen] = useState(false);
   const [scheduleAdjusted, setScheduleAdjusted] = useState(null);
 
-  // On mount: restore real user data from an existing Supabase session (if configured).
+  // On mount: handle OAuth callback hash (#access_token=...) or restore existing session.
   useEffect(() => {
-    window.supabaseClient?.loadSessionProfile?.().then(profile => {
-      if (profile) setDemo(d => ({ ...d, ...profile }));
-    });
+    const session = window.supabaseClient?.parseOAuthCallback?.();
+    if (session) {
+      // Just arrived from Google OAuth redirect — fetch profile and go to dashboard.
+      window.supabaseClient.loadSessionProfile().then(profile => {
+        if (profile) {
+          setDemo(d => ({ ...d, ...profile }));
+        } else if (session.user) {
+          const meta = session.user.user_metadata || {};
+          const fullName = meta.full_name || meta.name || session.user.email?.split('@')[0] || 'User';
+          const firstName = fullName.split(' ')[0] || fullName;
+          setDemo(d => ({ ...d, name: fullName, firstName, avatar: (firstName[0] || 'U').toUpperCase() }));
+        }
+        goNav('dashboard');
+      });
+    } else {
+      // No callback — try to restore an existing Supabase session silently.
+      window.supabaseClient?.loadSessionProfile?.().then(profile => {
+        if (profile) setDemo(d => ({ ...d, ...profile }));
+      });
+    }
   }, []);
 
   // Sync demo when demoTier tweak changes (only if not coming from diagnostic)

@@ -83,6 +83,11 @@ function LoginScreen({ goNav, setDemo }) {
   const [email, setEmail] = useStateL('angela.lin@gmail.com');
 
   const begin = () => {
+    // When Supabase is configured, do a real Google OAuth redirect.
+    // Returns true and navigates away; nothing more to do here.
+    if (window.supabaseClient?.startGoogleOAuth?.()) return;
+
+    // Fallback: mock animation (used in local / E2E environments).
     setStage('signing');
     setTimeout(() => setStage('done'), 1400);
 

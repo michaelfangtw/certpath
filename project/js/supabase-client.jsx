@@ -144,8 +144,61 @@
     } catch { return null; }
   }
 
+  // Redirect browser to Supabase Google OAuth. Returns false if not configured.
+  function startGoogleOAuth() {
+    if (!SUPA_URL || !SUPA_KEY) return false;
+    const redirectTo = window.location.origin + window.location.pathname;
+    const url = SUPA_URL + '/auth/v1/authorize?provider=google'
+      + '&redirect_to=' + encodeURIComponent(redirectTo);
+    window.location.href = url;
+    return true;
+  }
+
+  // Parse OAuth implicit-flow callback from URL hash (#access_token=...).
+  // Stores the session in localStorage and cleans the hash. Returns session or null.
+  function parseOAuthCallback() {
+    const hash = window.location.hash;
+    if (!hash || hash.indexOf('access_token') === -1) return null;
+    try {
+      const params = new URLSearchParams(hash.slice(1));
+      const accessToken  = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      const expiresIn    = params.get('expires_in');
+      const tokenType    = params.get('token_type');
+      if (!accessToken) return null;
+
+      // Decode user from JWT payload (base64url middle segment)
+      const b64 = accessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(atob(b64));
+      const user = {
+        id:            payload.sub,
+        email:         payload.email || '',
+        user_metadata: payload.user_metadata || {},
+      };
+
+      const session = {
+        access_token:  accessToken,
+        refresh_token: refreshToken || '',
+        expires_in:    parseInt(expiresIn) || 3600,
+        token_type:    tokenType || 'bearer',
+        user,
+      };
+
+      if (SUPA_URL) {
+        const proj = new URL(SUPA_URL).hostname.split('.')[0];
+        try { localStorage.setItem('sb-' + proj + '-auth-token', JSON.stringify(session)); } catch {}
+      }
+
+      // Remove the token hash so it doesn't leak on reload
+      try { window.history.replaceState(null, '', window.location.pathname + window.location.search); } catch {}
+
+      return session;
+    } catch { return null; }
+  }
+
   window.supabaseClient = {
     getStoredSession, fetchUserProfile, mapProfileToDemo, loadSessionProfile,
     saveTestSession, getTestHistory, fetchShopItems,
+    startGoogleOAuth, parseOAuthCallback,
   };
 })();
