@@ -8,9 +8,6 @@ function LandingScreen({ goNav }) {
                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                        maxWidth: 1280, margin: '0 auto' }}>
         <Logo size={44} />
-        <Button variant="primary" onClick={() => goNav('login')}>
-          Google 一鍵登入
-        </Button>
       </header>
 
       <section style={{ maxWidth: 1024, margin: '0 auto', padding: '80px 24px 64px', textAlign: 'center' }}>
