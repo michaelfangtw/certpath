@@ -1,6 +1,18 @@
 // Duolingo-style learning path — winding nodes, sections, locked/current/done states
 const { useState: useStateLP, useEffect: useEffectLP, useRef: useRefLP, useMemo: useMemoLP } = React;
 
+// Maps radar[i] weakness to recommended unit index in PATH_SECTIONS (0-based)
+// Radar: [聽力, 文法, 推論, 細節, 速度]
+const RADAR_TO_UNIT = [3, 0, 4, 2, 1]; // weak 聽力→Unit4, 文法→Unit1, 推論→Unit5, 細節→Unit3, 速度→Unit2
+const RADAR_LABELS = ['聽力', '文法', '推論閱讀', '細節理解', '答題速度'];
+const RADAR_UNIT_TIP = [
+  'Unit 4 差旅情境對話涵蓋大量聽力練習，能快速補強你的弱項。',
+  'Unit 1 辦公室基本款從高頻文法句型出發，是最快提分的起點。',
+  'Unit 5 面試題型側重長文推論，是衝高分的關鍵練習。',
+  'Unit 3 客戶業務報告型閱讀，訓練細節抓取能力最有效。',
+  'Unit 2 會議簡報計時模考最能鍛鍊你的答題節奏。',
+];
+
 // ── Path data ──────────────────────────────────────────────────────────────
 // A path = ordered list of sections, each with 5–7 nodes.
 // Nodes have type: drill | listening | reading | conversation | game | boss
@@ -127,6 +139,9 @@ function LearningPathScreen({ goNav, demo, dark, openGame }) {
   const totalNodes = allNodes.length;
   const overallPct = Math.round((totalDone / totalNodes) * 100);
 
+  const weakIdx = (demo?.radar?.length === 5) ? demo.radar.indexOf(Math.min(...demo.radar)) : -1;
+  const recSectionIdx = weakIdx >= 0 ? RADAR_TO_UNIT[weakIdx] : -1;
+
   const handleNodeClick = (node, section, status) => {
     setOpenNode({ node, section, status, record: progress[node.id] });
   };
@@ -175,6 +190,33 @@ function LearningPathScreen({ goNav, demo, dark, openGame }) {
           </div>
         </div>
 
+        {/* Personalized recommendation based on demo.radar */}
+        {weakIdx >= 0 && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 16, padding: '14px 18px',
+            marginBottom: 20, borderRadius: 16,
+            background: 'linear-gradient(135deg, #FFF5EC, #FFEED9)',
+            border: '2px solid #FFCDB8',
+            boxShadow: '0 4px 0 rgba(255,107,61,0.10)',
+          }}>
+            <div style={{ fontSize: 40, flexShrink: 0 }}>🦁</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                <Eyebrow color="var(--terra)" style={{ fontSize: 9 }}>Leo 個人化推薦</Eyebrow>
+                <Badge>{RADAR_LABELS[weakIdx]} 待加強</Badge>
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.5 }}>
+                {RADAR_UNIT_TIP[weakIdx]}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--ink-muted)', marginTop: 4 }}>
+                建議優先練習 → <strong style={{ color: 'var(--terra)' }}>
+                  {PATH_SECTIONS[recSectionIdx].unit} · {PATH_SECTIONS[recSectionIdx].title}
+                </strong>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Sections */}
         {PATH_SECTIONS.map((section, sIdx) => {
           const sectionDone = section.nodes.filter(n => progress[n.id]).length;
@@ -188,7 +230,8 @@ function LearningPathScreen({ goNav, demo, dark, openGame }) {
             <div key={section.id} style={{ marginBottom: 12 }}>
               {/* Section header — chapter banner */}
               <SectionBanner section={section} done={sectionDone} total={sectionTotal} pct={sectionPct}
-                             unlocked={sectionUnlocked} active={sectionActive} dark={dark} />
+                             unlocked={sectionUnlocked} active={sectionActive} dark={dark}
+                             recommended={sIdx === recSectionIdx} />
 
               {/* Nodes — winding layout, alternating left/right */}
               <div style={{ position: 'relative', padding: '24px 0 36px' }}>
@@ -287,7 +330,7 @@ function LearningPathScreen({ goNav, demo, dark, openGame }) {
 }
 
 // ── Section banner ─────────────────────────────────────────────────────────
-function SectionBanner({ section, done, total, pct, unlocked, active, dark }) {
+function SectionBanner({ section, done, total, pct, unlocked, active, dark, recommended }) {
   return (
     <div style={{
       position: 'relative',
@@ -295,11 +338,20 @@ function SectionBanner({ section, done, total, pct, unlocked, active, dark }) {
       color: '#fff',
       borderRadius: 18,
       padding: '16px 20px',
-      boxShadow: unlocked ? `0 5px 0 ${section.color}aa` : '0 4px 0 rgba(0,0,0,0.15)',
+      boxShadow: unlocked
+        ? (recommended ? `0 5px 0 ${section.color}aa, 0 0 0 3px #D4AF37` : `0 5px 0 ${section.color}aa`)
+        : '0 4px 0 rgba(0,0,0,0.15)',
       display: 'flex', alignItems: 'center', gap: 16,
       opacity: unlocked ? 1 : 0.55,
       overflow: 'hidden',
     }}>
+      {recommended && unlocked && (
+        <div style={{ position: 'absolute', top: 8, right: 8,
+                      background: '#D4AF37', color: '#fff', fontSize: 9,
+                      fontWeight: 900, letterSpacing: '0.1em', padding: '2px 7px', borderRadius: 9999 }}>
+          ★ Leo 推薦
+        </div>
+      )}
       <div style={{ fontSize: 36 }}>{section.emoji}</div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', opacity: 0.85 }}>
