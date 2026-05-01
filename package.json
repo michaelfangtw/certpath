@@ -1,7 +1,11 @@
 {
   "name": "certpath",
+  "scripts": {
+    "dev": "live-server . --port=5143 --open=\"project/certpath.html\""
+  },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
+    "live-server": "^1.2.2",
     "pdf-parse": "^2.4.5"
   }
 }

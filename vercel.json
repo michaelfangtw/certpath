@@ -1,8 +1,11 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/project/TOEIC Golden Certs.html" }],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/project/$1" }
+  ],
   "headers": [
     {
-      "source": "/project/(.*)",
+      "source": "/(.*)",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
     }
   ]
