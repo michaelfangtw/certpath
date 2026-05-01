@@ -22,11 +22,6 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
       <Navbar current="dashboard" onNav={goNav} demo={demo} dark={dark} />
 
       <main style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px 80px' }}>
-        {/* Catch-up alert — show when a real leaderboard rival is within 200 PTS */}
-        {rival && rival.gap <= 200 && (
-          <CatchUpBanner rival={rival} demo={demo} dark={dark} goNav={goNav} />
-        )}
-
         {/* Welcome */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
                       gap: 32, borderBottom: '1px solid var(--border)', paddingBottom: 32, marginBottom: 40 }}>
@@ -45,6 +40,11 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
           <CountdownCard days={demo.daysLeft} />
           <CoachAlert demo={demo} openCoach={openCoach} />
         </div>
+
+        {/* Catch-up alert — rendered after CoachAlert, show when a rival is within 200 PTS */}
+        {rival && rival.gap <= 200 && (
+          <CatchUpBanner rival={rival} demo={demo} dark={dark} goNav={goNav} />
+        )}
 
         {/* BIG Start Today's Game CTA */}
         <button onClick={() => goNav('games')} style={{
