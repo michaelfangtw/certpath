@@ -85,6 +85,7 @@ function LoginScreen({ goNav, setDemo }) {
     setStage('signing');
     setTimeout(() => setStage('done'), 1400);
     setTimeout(() => {
+      try { localStorage.removeItem('alert_dismissed_catchup'); } catch {}
       setDemo?.(d => ({ ...d, firstName: 'Angela', name: 'Angela', avatar: 'A' }));
       goNav('dashboard');
     }, 2400);

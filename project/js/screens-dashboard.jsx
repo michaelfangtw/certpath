@@ -41,9 +41,9 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
           <CoachAlert demo={demo} openCoach={openCoach} />
         </div>
 
-        {/* Catch-up alert — rendered after CoachAlert, show when a rival is within 200 PTS */}
+        {/* Catch-up toast — dismissible, fixed bottom-left, shown when a rival is within 200 PTS */}
         {rival && rival.gap <= 200 && (
-          <CatchUpBanner rival={rival} demo={demo} dark={dark} goNav={goNav} />
+          <CatchUpToast rival={rival} demo={demo} dark={dark} goNav={goNav} />
         )}
 
         {/* BIG Start Today's Game CTA */}
@@ -428,6 +428,60 @@ function CatchUpBanner({ rival, demo, dark, goNav }) {
               style={{ flexShrink: 0 }}>
         立刻追上去
       </Button>
+    </div>
+  );
+}
+
+function CatchUpToast({ rival, demo, dark, goNav }) {
+  const DISMISS_KEY = 'alert_dismissed_catchup';
+  const [visible, setVisible] = useStateDb(() => {
+    try { return !localStorage.getItem(DISMISS_KEY); } catch { return true; }
+  });
+  if (!visible) return null;
+  const dismiss = () => {
+    try { localStorage.setItem(DISMISS_KEY, '1'); } catch {}
+    setVisible(false);
+  };
+  const tierColor = TIER[rival.tier]?.text || '#FF6B3D';
+  return (
+    <div style={{
+      position: 'fixed', bottom: 24, left: 24, zIndex: 200,
+      maxWidth: 420, width: 'calc(100vw - 48px)',
+      padding: 18,
+      background: dark ? '#2a1f18' : 'linear-gradient(135deg, #FFF5EC 0%, #FFEED9 100%)',
+      borderRadius: 18,
+      border: `2px solid ${dark ? '#3a2f28' : '#FFCDB8'}`,
+      boxShadow: dark ? '0 8px 32px rgba(0,0,0,0.5)' : '0 8px 32px rgba(255,107,61,0.2)',
+      display: 'flex', alignItems: 'center', gap: 14,
+      animation: 'slideUp 500ms var(--ease-out) both',
+      position: 'fixed', overflow: 'hidden',
+    }}>
+      <div style={{ position: 'absolute', right: -10, top: -16, fontSize: 80, opacity: 0.06,
+                    pointerEvents: 'none' }}>🏃‍♀️</div>
+      <div style={{
+        width: 48, height: 48, borderRadius: 9999,
+        background: tierColor, color: '#fff',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontWeight: 900, fontSize: 18, fontFamily: 'var(--font-serif)', flexShrink: 0,
+      }}>{rival.avatar}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+          <span style={{ fontSize: 13 }}>⚡</span>
+          <Eyebrow color={tierColor} style={{ fontSize: 9 }}>Catch-up Alert</Eyebrow>
+        </div>
+        <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 14,
+                       color: dark ? '#F5EFEA' : 'var(--ink)', lineHeight: 1.4 }}>
+          再 <span style={{ color: tierColor }}>+{rival.gap}</span> PTS 超越 <span style={{ color: tierColor }}>{rival.name}</span>！
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0, alignItems: 'flex-end' }}>
+        <Button variant="primary" style={{ fontSize: 11, padding: '5px 10px' }}
+                onClick={() => { dismiss(); goNav('practice'); }}>追上去</Button>
+        <button onClick={dismiss} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: 11, color: dark ? '#A9A39C' : 'var(--ink-muted)', fontFamily: 'var(--font-sans)',
+        }}>不再顯示 ✕</button>
+      </div>
     </div>
   );
 }
