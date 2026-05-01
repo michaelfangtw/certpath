@@ -402,12 +402,30 @@ function CatchUpBanner({ rival, demo, dark, goNav }) {
 }
 
 function LeaderboardMini() {
+  const [entries, setEntries] = useStateDb(LEADERBOARD);
+
+  useEffectDb(() => {
+    const sb = window.supabase;
+    if (!sb) return;
+    sb.from('leaderboard_entries')
+      .select('rank, name, score, tier, avatar, delta')
+      .order('rank', { ascending: true })
+      .limit(5)
+      .then(({ data, error }) => {
+        if (!error && data && data.length > 0) setEntries(data);
+      });
+  }, []);
+
   return (
     <PaperCard style={{ padding: 0, overflow: 'hidden' }}>
-      {LEADERBOARD.map((u, i) => (
+      {entries.length === 0 ? (
+        <div style={{ padding: '24px', textAlign: 'center', color: 'var(--ink-muted)', fontSize: 13, fontStyle: 'italic' }}>
+          排行榜暫無資料
+        </div>
+      ) : entries.map((u, i) => (
         <div key={u.rank} style={{
           display: 'flex', alignItems: 'center', gap: 16, padding: '14px 24px',
-          borderBottom: i === LEADERBOARD.length - 1 ? 'none' : '1px solid var(--border)',
+          borderBottom: i === entries.length - 1 ? 'none' : '1px solid var(--border)',
           background: u.rank === 1 ? 'var(--cert-gold-tint)' : 'transparent',
         }}>
           <div style={{
