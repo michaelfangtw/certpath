@@ -71,7 +71,7 @@ public symbols onto `window`.
 |------|------------------------|
 | `js/supabase-client.jsx` | `supabaseClient` (object with methods: `getStoredSession`, `fetchUserProfile`, `mapProfileToDemo`, `loadSessionProfile`, `saveTestSession`, `getTestHistory`, `fetchShopItems`, `startGoogleOAuth`, `parseOAuthCallback`) |
 | `tweaks-panel.jsx` | `useTweaks` `TweaksPanel` `TweakSection` `TweakRow` `TweakSlider` `TweakToggle` `TweakRadio` `TweakSelect` `TweakText` `TweakNumber` `TweakColor` `TweakButton` |
-| `js/data.jsx` | `DIAGNOSTIC` `SAMPLE_QUIZ` `QUIZ_PARTS` `scaleListening` `scaleReading` `DEMO_TIERS` `LEADERBOARD` `COACH_GREETINGS` `RIVALS` `findRival` |
+| `js/data.jsx` | `DIAGNOSTIC` `SAMPLE_QUIZ` `QUIZ_PARTS` `scaleListening` `scaleReading` `DEMO_TIERS` `LEADERBOARD` `COACH_GREETINGS` `APP_VERSION` |
 | `js/primitives.jsx` | `Icon` `Logo` `Eyebrow` `Button` `Badge` `PaperCard` `CertBadge` `TIER` `tierFromScore` `useCountUp` |
 | `js/shell.jsx` | `Navbar` `PointsFloater` `DailySignInModal` `AudioPlayer` `Part1Photo` |
 | `js/screens-landing.jsx` | `LandingScreen` `LoginScreen` |
@@ -127,7 +127,7 @@ All state lives in the root `App` component in `TOEIC Golden Certs.html`.
 | `firePoints(amt, label)` | main HTML | Trigger the flying +PTS floater animation |
 | `fireConfetti()` | main HTML | Trigger full-screen confetti burst |
 | `claimSignIn()` | main HTML | Claim daily sign-in reward (+10 PTS) and close modal |
-| `findRival(myPoints, myRank)` | `js/data.jsx` | Return closest leaderboard rival above user with point gap |
+| `findRival(myPoints)` | `TOEIC Golden Certs.html` | Pick a random leaderboard entry as rival and return it with a `gap` field (rival.score − myPoints) |
 | `scaleListening(correct, total)` | `js/data.jsx` | Scale correct listening answers to TOEIC 0–495 range |
 | `scaleReading(correct, total)` | `js/data.jsx` | Scale correct reading answers to TOEIC 0–495 range |
 | `tierFromScore(score)` | `js/primitives.jsx` | Map a TOEIC predicted score to tier key (`gold`/`blue`/`green`/`brown`/`orange`) |
