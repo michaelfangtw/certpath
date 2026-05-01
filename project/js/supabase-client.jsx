@@ -116,8 +116,36 @@
     return record;
   }
 
+  async function fetchShopItems() {
+    if (!SUPA_URL || !SUPA_KEY) return null;
+    try {
+      const res = await fetch(
+        SUPA_URL + '/rest/v1/shop_items?select=*&order=cost.asc',
+        {
+          headers: {
+            'apikey':        SUPA_KEY,
+            'Authorization': 'Bearer ' + SUPA_KEY,
+            'Accept':        'application/json',
+          },
+        }
+      );
+      if (!res.ok) return null;
+      const rows = await res.json();
+      if (!Array.isArray(rows) || rows.length === 0) return null;
+      return rows.map(r => ({
+        id:        r.id,
+        icon:      r.icon      || '📦',
+        name:      r.name      || '',
+        desc:      r.desc      || r.description || '',
+        cost:      r.cost      || 0,
+        tag:       r.tag       || undefined,
+        comingSoon: r.coming_soon || false,
+      }));
+    } catch { return null; }
+  }
+
   window.supabaseClient = {
     getStoredSession, fetchUserProfile, mapProfileToDemo, loadSessionProfile,
-    saveTestSession, getTestHistory,
+    saveTestSession, getTestHistory, fetchShopItems,
   };
 })();
