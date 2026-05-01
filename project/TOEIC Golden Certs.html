@@ -110,10 +110,20 @@ function ConfettiBurst({ trigger }) {
 function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [route, setRoute] = useState('landing');
-  const [demo, setDemo] = useState(() => ({
-    ...DEMO_TIERS[TWEAK_DEFAULTS.demoTier],
-    firstName: '', name: 'Guest', avatar: '?',
-  }));
+  const [demo, setDemo] = useState(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    let completedToday = 0;
+    try {
+      const saved = JSON.parse(localStorage.getItem('certpath_daily_completed') || 'null');
+      if (saved && saved.date === today) completedToday = saved.count || 0;
+    } catch {}
+    let gamesCompletedToday = 0;
+    try {
+      const saved = JSON.parse(localStorage.getItem('certpath_games_completed') || 'null');
+      if (saved && saved.date === today) gamesCompletedToday = saved.count || 0;
+    } catch {}
+    return { ...DEMO_TIERS[TWEAK_DEFAULTS.demoTier], firstName: '', name: 'Guest', avatar: '?', completedToday, gamesCompletedToday };
+  });
   const [diagResult, setDiagResult] = useState(null);
   const [quizResult, setQuizResult] = useState(null);
   const [showSignIn, setShowSignIn] = useState(false);

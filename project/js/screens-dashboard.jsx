@@ -75,7 +75,13 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
                            fontSize: 11, fontWeight: 900, letterSpacing: '0.1em' }}>
               {DAILY_MISSION_MINUTES} 分鐘 · 隨時可玩
             </div>
-            <div style={{ fontSize: 13, fontWeight: 700, opacity: 0.9 }}>還沒挑戰 ⏰</div>
+            <div style={{ fontSize: 13, fontWeight: 700, opacity: 0.9 }}>
+              {(demo.gamesCompletedToday || 0) >= DAILY_MISSION_GAMES
+                ? '已完成 ✓'
+                : (demo.gamesCompletedToday || 0) > 0
+                  ? `進行中... (${demo.gamesCompletedToday}/${DAILY_MISSION_GAMES})`
+                  : '還沒挑戰 ⏰'}
+            </div>
           </div>
           {/* Decorative sparkles */}
           <div style={{ position: 'absolute', top: 12, right: 24, fontSize: 18, opacity: 0.5 }}>✨</div>

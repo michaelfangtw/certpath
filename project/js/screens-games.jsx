@@ -148,7 +148,7 @@ function GameHub({ goNav, demo, dark, openGame }) {
             <Eyebrow style={{ marginBottom: 8 }}>每日小遊戲 · Daily Mini Games</Eyebrow>
             <h1 style={{ fontSize: 36, marginBottom: 8 }}>每天 5 分鐘，邊玩邊學 🎮</h1>
             <p style={{ fontSize: 15, color: 'var(--ink-muted)', lineHeight: 1.7, maxWidth: 560 }}>
-              短短幾分鐘的小遊戲，連續打卡可以獲得加倍點數。今日已完成 <strong style={{ color: 'var(--terra)' }}>1 / 3</strong> 場。
+              短短幾分鐘的小遊戲，連續打卡可以獲得加倍點數。今日已完成 <strong style={{ color: 'var(--terra)' }}>{demo.gamesCompletedToday || 0} / 3</strong> 場。
             </p>
             <div style={{ display: 'flex', gap: 20, marginTop: 16 }}>
               <Stat label="今日點數" value="+180 PTS" />
@@ -317,7 +317,14 @@ function WordMatchGame({ onExit, firePoints, fireConfetti, setDemo }) {
       setTimeout(() => {
         firePoints?.(pts, `Lv ${level + 1} 過關 · ${t.toFixed(1)}s`);
         if (pts >= 500) fireConfetti?.();
-        setDemo?.(d => ({ ...d, points: d.points + pts }));
+        setDemo?.(d => {
+          const nextGames = Math.min((d.gamesCompletedToday || 0) + 1, 3);
+          try {
+            const today = new Date().toISOString().slice(0, 10);
+            localStorage.setItem('certpath_games_completed', JSON.stringify({ date: today, count: nextGames }));
+          } catch {}
+          return { ...d, points: d.points + pts, gamesCompletedToday: nextGames };
+        });
       }, 400);
     }
   }, [matched]);
@@ -573,7 +580,14 @@ function SoundPopGame({ onExit, firePoints, fireConfetti, setDemo }) {
           const pts = (score + 1) * 20;
           firePoints?.(pts, '聽力打地鼠通關');
           if (score + 1 >= 5) fireConfetti?.();
-          setDemo?.(d => ({ ...d, points: d.points + pts }));
+          setDemo?.(d => {
+            const nextGames = Math.min((d.gamesCompletedToday || 0) + 1, 3);
+            try {
+              const today = new Date().toISOString().slice(0, 10);
+              localStorage.setItem('certpath_games_completed', JSON.stringify({ date: today, count: nextGames }));
+            } catch {}
+            return { ...d, points: d.points + pts, gamesCompletedToday: nextGames };
+          });
         } else setRound(round + 1);
       }, 800);
     } else {
@@ -713,7 +727,14 @@ function WordOrderGame({ onExit, firePoints, fireConfetti, setDemo }) {
         const pts = (score + (ok ? 1 : 0)) * 30;
         firePoints?.(pts, '句子拼圖通關');
         if (score + (ok ? 1 : 0) >= 3) fireConfetti?.();
-        setDemo?.(d => ({ ...d, points: d.points + pts }));
+        setDemo?.(d => {
+          const nextGames = Math.min((d.gamesCompletedToday || 0) + 1, 3);
+          try {
+            const today = new Date().toISOString().slice(0, 10);
+            localStorage.setItem('certpath_games_completed', JSON.stringify({ date: today, count: nextGames }));
+          } catch {}
+          return { ...d, points: d.points + pts, gamesCompletedToday: nextGames };
+        });
       } else setRound(round + 1);
     }, 1600);
   };
