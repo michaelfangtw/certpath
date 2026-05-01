@@ -37,6 +37,7 @@ project/
 │       │   └── tokens.css
 │       └── js/                  ← subset of js/ files included in export
 └── js/
+    ├── supabase-client.jsx      ← Supabase REST wrapper; exports window.supabaseClient
     ├── data.jsx                 ← mock data + helper functions
     ├── primitives.jsx           ← shared UI atoms
     ├── shell.jsx                ← Navbar, audio player, modals
@@ -68,6 +69,7 @@ public symbols onto `window`.
 
 | File | Window-exported symbols |
 |------|------------------------|
+| `js/supabase-client.jsx` | `supabaseClient` (object with methods: `getStoredSession`, `fetchUserProfile`, `mapProfileToDemo`, `loadSessionProfile`, `saveTestSession`, `getTestHistory`, `fetchShopItems`, `startGoogleOAuth`, `parseOAuthCallback`) |
 | `tweaks-panel.jsx` | `useTweaks` `TweaksPanel` `TweakSection` `TweakRow` `TweakSlider` `TweakToggle` `TweakRadio` `TweakSelect` `TweakText` `TweakNumber` `TweakColor` `TweakButton` |
 | `js/data.jsx` | `DIAGNOSTIC` `SAMPLE_QUIZ` `QUIZ_PARTS` `scaleListening` `scaleReading` `DEMO_TIERS` `LEADERBOARD` `COACH_GREETINGS` `RIVALS` `findRival` |
 | `js/primitives.jsx` | `Icon` `Logo` `Eyebrow` `Button` `Badge` `PaperCard` `CertBadge` `TIER` `tierFromScore` `useCountUp` |
@@ -115,6 +117,12 @@ All state lives in the root `App` component in `TOEIC Golden Certs.html`.
 
 | Function | Defined in | Purpose |
 |----------|-----------|---------|
+| `supabaseClient.loadSessionProfile()` | `js/supabase-client.jsx` | Resolve stored session → fetch Supabase profile → map to demo shape; returns null when unconfigured |
+| `supabaseClient.saveTestSession(session)` | `js/supabase-client.jsx` | Persist test session to localStorage and optionally to Supabase `user_test_sessions` |
+| `supabaseClient.getTestHistory()` | `js/supabase-client.jsx` | Return array of locally stored test sessions (last 20) |
+| `supabaseClient.fetchShopItems()` | `js/supabase-client.jsx` | Fetch shop items from Supabase `shop_items` table; returns null when unconfigured |
+| `supabaseClient.startGoogleOAuth()` | `js/supabase-client.jsx` | Redirect to Supabase Google OAuth; returns false when unconfigured |
+| `supabaseClient.parseOAuthCallback()` | `js/supabase-client.jsx` | Parse implicit-flow OAuth hash, store session in localStorage, clean URL hash |
 | `goNav(route)` | main HTML | Navigate to a screen; triggers daily-gate and sign-in side effects |
 | `firePoints(amt, label)` | main HTML | Trigger the flying +PTS floater animation |
 | `fireConfetti()` | main HTML | Trigger full-screen confetti burst |
@@ -159,7 +167,15 @@ Routes are simulated via the `route` state string; no URL router is used in the 
 
 ## Database Schema
 
-None — this is a static HTML prototype. All data is mock, held in memory via `js/data.jsx` constants. No Supabase migrations exist yet.
+All demo data is mock, held in memory via `js/data.jsx` constants. The prototype optionally connects to Supabase when `window.SUPABASE_URL` and `window.SUPABASE_ANON_KEY` are set by the host page. When configured, `js/supabase-client.jsx` accesses the following REST endpoints:
+
+| Table | Used by | Purpose |
+|-------|---------|---------|
+| `user_profiles` | `fetchUserProfile` | Read learner profile (points, streak, scores, tier, etc.) |
+| `user_test_sessions` | `saveTestSession` | Persist completed test session records |
+| `shop_items` | `fetchShopItems` | Read reward shop catalogue |
+
+No Supabase migrations are included in this repository.
 
 ## API Endpoints
 
