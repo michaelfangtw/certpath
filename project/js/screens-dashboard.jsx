@@ -209,8 +209,15 @@ function SectionHeader({ title, eyebrow, right }) {
 }
 
 function CountdownCard({ days }) {
-  const hasDate = days != null;
-  const urgent = hasDate && days <= 30;
+  const examDate = localStorage.getItem('certpath_exam_target');
+  const daysLeft = examDate
+    ? Math.max(0, Math.ceil((new Date(examDate) - Date.now()) / 86400000))
+    : (days ?? null);
+  const hasDate = daysLeft != null;
+  const urgent = hasDate && daysLeft <= 30;
+  const dateLabel = examDate
+    ? new Date(examDate).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })
+    : null;
   return (
     <PaperCard accent="top-terra" style={{ position: 'relative', overflow: 'hidden',
                                             background: urgent ? 'linear-gradient(135deg, var(--terra-05), var(--paper-card))' : 'var(--paper-card)' }}>
@@ -224,17 +231,22 @@ function CountdownCard({ days }) {
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 900, fontSize: 56,
                           color: urgent ? 'var(--terra)' : 'var(--ink)', lineHeight: 1,
                           fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em' }}>
-              {days}
+              {daysLeft}
             </div>
             <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 900, fontSize: 14,
                           color: 'var(--ink-muted)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
               DAYS
             </div>
           </div>
+          {dateLabel && (
+            <div style={{ fontSize: 11, color: 'var(--ink-muted)', marginTop: 8, fontStyle: 'italic' }}>
+              {dateLabel}
+            </div>
+          )}
         </>
       ) : (
         <div style={{ marginTop: 12 }}>
-          <div style={{ fontSize: 14, color: 'var(--ink-muted)', marginBottom: 12 }}>尚未設定考試日</div>
+          <div style={{ fontSize: 14, color: 'var(--ink-muted)', marginBottom: 12 }}>尚未設定考試日期</div>
           <Button variant="outline" style={{ fontSize: 12, padding: '6px 14px' }}>
             <Icon name="flag" size={12} /> 設定考試日期
           </Button>
