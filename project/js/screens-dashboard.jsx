@@ -290,7 +290,7 @@ function CoachAlert({ demo, openCoach }) {
             <Eyebrow style={{ fontSize: 9 }}>Academic Warning</Eyebrow>
           </h3>
           <p style={{ color: 'var(--ink-muted)', fontSize: 14, marginTop: 6 }}>
-            今日完成 <strong style={{ color: 'var(--ink)' }}>3</strong> 題。
+            今日完成 <strong style={{ color: 'var(--ink)' }}>{demo.completedToday ?? '—'}</strong> 題。
             剩餘 <strong style={{ color: 'var(--ink)' }}>{demo.daysLeft ?? '—'}</strong> 天，
             建議每日練至 <span style={{ color: 'var(--terra)', fontWeight: 900,
               textDecoration: 'underline', textDecorationThickness: 2, textUnderlineOffset: 4 }}>{need}</span> 題。
