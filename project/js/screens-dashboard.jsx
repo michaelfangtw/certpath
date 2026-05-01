@@ -174,9 +174,19 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
               <div style={{ marginTop: 16, padding: 14, background: 'var(--paper-muted)',
                             borderRadius: 8, fontSize: 11, color: 'var(--ink-muted)', lineHeight: 1.6 }}>
                 💡 <strong style={{ color: 'var(--ink)' }}>AI 建議：</strong>
-                {demo.tier === 'gold' ? '推論能力略弱，建議多練 Part 7 多重文本。' :
-                 demo.tier === 'blue' ? '聽力場景需加強，每日 Part 3 三題。' :
-                 '基礎扎實，可開始拉長閱讀段落練習。'}
+                {(() => {
+                  const tips = [
+                    '聽力基礎需加強，每日 Part 3 三題，持續 2 週見效。',
+                    '文法規則薄弱，建議集中練 Part 5 單句填空。',
+                    '推論能力略弱，建議多練 Part 7 多重文本。',
+                    '細節掌握不足，試試 Part 6 段落填空加強專注力。',
+                    '答題速度偏慢，計時練習 + 略讀策略可大幅提升。',
+                  ];
+                  if (!demo.radar || !demo.radar.length) return '基礎扎實，可開始拉長閱讀段落練習。';
+                  const minVal = Math.min(...demo.radar);
+                  const weakIdx = demo.radar.indexOf(minVal);
+                  return tips[weakIdx] || '持續練習，穩定提升各項能力。';
+                })()}
               </div>
               <button onClick={openCoach} style={{
                 marginTop: 16, width: '100%', padding: '10px 14px',
