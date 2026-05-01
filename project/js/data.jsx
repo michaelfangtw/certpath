@@ -262,6 +262,6 @@ const QUIZ_PARTS = [
     explain: '"Welcome aboard"、"flying time" 都是空服員機上廣播常用語，故選 (B)。' },
 ];
 
-const APP_VERSION = 'v1.0.8';
+const APP_VERSION = 'v1.0.7';
 
 Object.assign(window, { DIAGNOSTIC, SAMPLE_QUIZ, QUIZ_PARTS, scaleListening, scaleReading, DEMO_TIERS, LEADERBOARD, COACH_GREETINGS, APP_VERSION });
