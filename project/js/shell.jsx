@@ -1,7 +1,45 @@
 // Shared shell pieces — Navbar, ToastFloater, AudioPlayer
 const { useState: useStateS, useEffect: useEffectS, useRef: useRefS } = React;
 
+function ExamTargetModal({ onClose, dark }) {
+  const existing = localStorage.getItem('certpath_exam_target') || '';
+  const [date, setDate] = useStateS(existing);
+  const save = () => {
+    if (!date) return;
+    try { localStorage.setItem('certpath_exam_target', date); } catch {}
+    window.dispatchEvent(new CustomEvent('certpath:examTargetSet', { detail: { date } }));
+    onClose();
+  };
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 300, display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}
+         onClick={onClose}>
+      <div style={{ background: dark ? '#1a1612' : '#fff', borderRadius: 20, padding: 36,
+                    boxShadow: '0 24px 80px rgba(0,0,0,0.3)', minWidth: 340,
+                    border: `1px solid ${dark ? '#3a2f28' : 'var(--border)'}` }}
+           onClick={e => e.stopPropagation()}>
+        <Eyebrow style={{ marginBottom: 8 }}>Set Target</Eyebrow>
+        <h3 style={{ margin: '0 0 20px', color: dark ? '#F5EFEA' : 'var(--ink)' }}>設定考試日期</h3>
+        <input type="date" value={date} onChange={e => setDate(e.target.value)}
+               min={new Date().toISOString().slice(0, 10)}
+               style={{ width: '100%', padding: '10px 14px', fontSize: 15, borderRadius: 10,
+                        border: '1.5px solid var(--border)', background: dark ? '#2a1f18' : '#fff',
+                        color: dark ? '#F5EFEA' : 'var(--ink)', fontFamily: 'var(--font-sans)',
+                        boxSizing: 'border-box', marginBottom: 20 }} />
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+          <Button variant="ghost" onClick={onClose}>取消</Button>
+          <Button variant="primary" onClick={save} disabled={!date}>儲存日期</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Navbar({ current = 'dashboard', onNav, demo, dark }) {
+  const [menuOpen, setMenuOpen] = useStateS(false);
+  const [examModalOpen, setExamModalOpen] = useStateS(false);
+  const menuRef = useRefS(null);
   const links = [
     { id: 'dashboard',  label: '學習總覽' },
     { id: 'path',       label: '學習路徑' },
@@ -9,7 +47,22 @@ function Navbar({ current = 'dashboard', onNav, demo, dark }) {
     { id: 'leaderboard', label: '排行榜' },
     { id: 'shop',       label: '獎勵商店' },
   ];
+
+  useEffectS(() => {
+    const handleOpenExam = () => setExamModalOpen(true);
+    window.addEventListener('certpath:openExamModal', handleOpenExam);
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('certpath:openExamModal', handleOpenExam);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
+    <>
     <header style={{
       position: 'sticky', top: 0, zIndex: 50,
       borderBottom: dark ? '1px solid rgba(212,175,55,0.15)' : '1px solid var(--border)',
@@ -45,14 +98,40 @@ function Navbar({ current = 'dashboard', onNav, demo, dark }) {
             </div>
           </div>
           <div style={{ height: 32, width: 1, background: dark ? 'rgba(212,175,55,0.2)' : 'var(--border)' }} />
-          <div style={{
-            width: 36, height: 36, borderRadius: 9999, background: 'var(--terra)', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 900, fontSize: 14,
-          }}>{demo.avatar}</div>
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 9999, background: 'var(--terra)', color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 900, fontSize: 14, cursor: 'pointer',
+            }} onClick={() => setMenuOpen(o => !o)}>{demo.avatar}</div>
+            {menuOpen && (
+              <div style={{
+                position: 'absolute', top: 44, right: 0, minWidth: 200,
+                background: dark ? '#1a1612' : '#fff',
+                border: `1px solid ${dark ? '#3a2f28' : 'var(--border)'}`,
+                borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                overflow: 'hidden', zIndex: 100,
+              }}>
+                <div style={{ padding: '10px 16px', borderBottom: `1px solid ${dark ? '#3a2f28' : 'var(--border)'}` }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: dark ? '#F5EFEA' : 'var(--ink)' }}>{demo.name}</div>
+                  <div style={{ fontSize: 11, color: dark ? '#A9A39C' : 'var(--ink-muted)', marginTop: 2 }}>{demo.points.toLocaleString()} PTS</div>
+                </div>
+                <button onClick={() => { setMenuOpen(false); setExamModalOpen(true); }} style={{
+                  display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+                  padding: '12px 16px', border: 'none', background: 'transparent',
+                  cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                  color: dark ? '#F5EFEA' : 'var(--ink)', fontFamily: 'var(--font-sans)',
+                }}>
+                  <Icon name="flag" size={14} /> 設定考試目標
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
     </header>
+    {examModalOpen && <ExamTargetModal onClose={() => setExamModalOpen(false)} dark={dark} />}
+    </>
   );
 }
 

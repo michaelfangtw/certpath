@@ -234,7 +234,12 @@ function SectionHeader({ title, eyebrow, right }) {
 }
 
 function CountdownCard({ days }) {
-  const examDate = localStorage.getItem('certpath_exam_target');
+  const [examDate, setExamDate] = useStateDb(() => localStorage.getItem('certpath_exam_target') || null);
+  useEffectDb(() => {
+    const onSet = (e) => setExamDate(e.detail?.date || localStorage.getItem('certpath_exam_target'));
+    window.addEventListener('certpath:examTargetSet', onSet);
+    return () => window.removeEventListener('certpath:examTargetSet', onSet);
+  }, []);
   const daysLeft = examDate
     ? Math.max(0, Math.ceil((new Date(examDate) - Date.now()) / 86400000))
     : (days ?? null);
@@ -272,7 +277,8 @@ function CountdownCard({ days }) {
       ) : (
         <div style={{ marginTop: 12 }}>
           <div style={{ fontSize: 14, color: 'var(--ink-muted)', marginBottom: 12 }}>尚未設定考試日期</div>
-          <Button variant="outline" style={{ fontSize: 12, padding: '6px 14px' }}>
+          <Button variant="outline" style={{ fontSize: 12, padding: '6px 14px' }}
+                  onClick={() => window.dispatchEvent(new CustomEvent('certpath:openExamModal'))}>
             <Icon name="flag" size={12} /> 設定考試日期
           </Button>
         </div>
