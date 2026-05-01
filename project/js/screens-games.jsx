@@ -89,9 +89,14 @@ function _getBank() {
 // Mirrors getSRState from screens-daily-quest.jsx
 const _srP = id => { const n={v01:3,v02:1,v03:0,v04:2,v05:5,v06:0,v07:1,v08:4,v09:0,v10:2}[id]||0; return n===0?0:n<=2?1:n<=4?2:3; };
 
+const _shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+
 function buildWordMatchLevels() {
   const bank = _getBank();
-  if (!bank) return WORD_LEVELS;
+  if (!bank) {
+    const shuffledLevels = _shuffle(WORD_LEVELS);
+    return shuffledLevels.map(lvl => ({ ...lvl, pairs: _shuffle(lvl.pairs) }));
+  }
   const sorted = [...bank].sort((a,b) => _srP(a.id) - _srP(b.id));
   const dyn = [];
   const lbl = ['新單字','學習中','複習','已掌握'];
@@ -100,12 +105,12 @@ function buildWordMatchLevels() {
     if (chunk.length < 2) break;
     dyn.push({ name:`Lv ${dyn.length+1} · ${lbl[_srP(chunk[0].id)]}`, pairs:chunk.map(v=>({en:v.word,zh:v.meaning})) });
   }
-  return dyn.length ? [...dyn, ...WORD_LEVELS] : WORD_LEVELS;
+  return dyn.length ? [...dyn, ...WORD_LEVELS] : _shuffle(WORD_LEVELS).map(lvl => ({ ...lvl, pairs: _shuffle(lvl.pairs) }));
 }
 
 function buildSoundPops() {
   const bank = _getBank();
-  if (!bank) return SOUND_POP;
+  if (!bank) return _shuffle(SOUND_POP);
   const sorted = [...bank].sort((a,b) => _srP(a.id) - _srP(b.id));
   return sorted.slice(0, 6).map(v => {
     const others = bank.filter(b=>b.id!==v.id).sort(()=>Math.random()-0.5).slice(0,3).map(b=>b.word);
@@ -115,7 +120,7 @@ function buildSoundPops() {
 
 function buildScrambles() {
   const bank = _getBank();
-  if (!bank) return SCRAMBLE;
+  if (!bank) return _shuffle(SCRAMBLE);
   const sorted = [...bank].sort((a,b) => _srP(a.id) - _srP(b.id));
   return sorted.slice(0,4).map(v => ({ src:v.sentence.replace(/\*\*/g,''), zh:v.meaning, alts:[] }));
 }
