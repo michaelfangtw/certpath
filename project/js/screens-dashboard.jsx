@@ -721,3 +721,4 @@ function CoachChat({ open, onClose, demo }) {
 window.DashboardScreen = DashboardScreen;
 window.CoachChat = CoachChat;
 window.CatchUpBanner = CatchUpBanner;
+window.SectionHeader = SectionHeader;
