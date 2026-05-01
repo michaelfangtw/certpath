@@ -167,6 +167,7 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
             </div>
 
             <div style={{ height: 32 }} />
+            <ScoreHistoryCard dark={dark} />
             <SectionHeader title="每日簽到月曆" eyebrow="Streak Calendar" />
             <StreakCalendar streak={demo.streak} />
 
@@ -216,6 +217,90 @@ function DashboardScreen({ goNav, demo, theme, dark, openCoach }) {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+function ScoreHistoryCard({ dark }) {
+  const [history, setHistory] = useStateDb(() =>
+    window.supabaseClient?.getTestHistory?.() || []
+  );
+
+  useEffectDb(() => {
+    setHistory(window.supabaseClient?.getTestHistory?.() || []);
+  }, []);
+
+  if (history.length === 0) return null;
+
+  const recent = history.slice(-8);
+  const latest = recent[recent.length - 1];
+  const W = 260, H = 64;
+
+  const points = recent.map((s, i) => ({
+    x: recent.length === 1 ? W / 2 : (i / (recent.length - 1)) * W,
+    y: H - Math.max(4, (s.total_score / 990) * H),
+    score: s.total_score,
+  }));
+
+  const linePath = points.length >= 2
+    ? 'M ' + points.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')
+    : null;
+
+  return (
+    <div style={{ marginBottom: 32 }}>
+      <SectionHeader title="模擬成績走勢" eyebrow="Score History" />
+      <PaperCard style={{ padding: 24 }}>
+        <svg width="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none"
+             style={{ display: 'block', marginBottom: 12, overflow: 'visible' }}>
+          {linePath && (
+            <path d={linePath} fill="none" stroke="var(--terra)" strokeWidth="2"
+                  strokeLinejoin="round" strokeLinecap="round" />
+          )}
+          {points.map((p, i) => (
+            <g key={i}>
+              <circle cx={p.x} cy={p.y} r="4" fill="var(--terra)" />
+              <text x={p.x} y={p.y - 8} textAnchor="middle"
+                    fill={dark ? '#A9A39C' : 'var(--ink-muted)'}
+                    fontSize="9" fontFamily="var(--font-sans)">{p.score}</text>
+            </g>
+          ))}
+        </svg>
+        <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
+          <div>
+            <Eyebrow color="var(--ink-muted)" style={{ marginBottom: 4 }}>聽力</Eyebrow>
+            <span style={{ fontWeight: 900, fontFamily: 'var(--font-serif)', fontSize: 20 }}>
+              {latest.listening_scaled}
+            </span>
+            <span style={{ fontSize: 10, color: 'var(--ink-muted)' }}>/495</span>
+          </div>
+          <div>
+            <Eyebrow color="var(--ink-muted)" style={{ marginBottom: 4 }}>閱讀</Eyebrow>
+            <span style={{ fontWeight: 900, fontFamily: 'var(--font-serif)', fontSize: 20 }}>
+              {latest.reading_scaled}
+            </span>
+            <span style={{ fontSize: 10, color: 'var(--ink-muted)' }}>/495</span>
+          </div>
+          <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+            <Eyebrow color="var(--ink-muted)" style={{ marginBottom: 4 }}>Total</Eyebrow>
+            <span style={{ fontWeight: 900, fontFamily: 'var(--font-serif)', fontSize: 24,
+                           color: 'var(--terra)' }}>
+              {latest.total_score}
+            </span>
+            <span style={{ fontSize: 10, color: 'var(--ink-muted)' }}>/990</span>
+          </div>
+        </div>
+        {history.length > 1 && (() => {
+          const prev = history[history.length - 2];
+          const diff = latest.total_score - prev.total_score;
+          if (diff === 0) return null;
+          return (
+            <div style={{ marginTop: 12, fontSize: 12, color: diff > 0 ? 'var(--state-success)' : 'var(--state-error)',
+                           fontWeight: 700 }}>
+              {diff > 0 ? '▲' : '▼'} {Math.abs(diff)} 分（vs 上次）
+            </div>
+          );
+        })()}
+      </PaperCard>
     </div>
   );
 }

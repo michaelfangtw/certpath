@@ -72,5 +72,52 @@
     return mapProfileToDemo(profile, user);
   }
 
-  window.supabaseClient = { getStoredSession, fetchUserProfile, mapProfileToDemo, loadSessionProfile };
+  const LS_HISTORY_KEY = 'certpath_test_sessions';
+
+  function getTestHistory() {
+    try { return JSON.parse(localStorage.getItem(LS_HISTORY_KEY) || '[]'); } catch { return []; }
+  }
+
+  // session shape: { type, listening_raw, reading_raw, listening_scaled, reading_scaled, total_score }
+  async function saveTestSession(session) {
+    const record = {
+      ...session,
+      id: Date.now().toString(),
+      completed_at: new Date().toISOString(),
+    };
+
+    // Always persist locally
+    try {
+      const history = getTestHistory();
+      history.push(record);
+      if (history.length > 20) history.splice(0, history.length - 20);
+      localStorage.setItem(LS_HISTORY_KEY, JSON.stringify(history));
+    } catch {}
+
+    // Also write to Supabase when configured
+    if (SUPA_URL && SUPA_KEY) {
+      const stored = getStoredSession();
+      if (stored?.user) {
+        try {
+          await fetch(SUPA_URL + '/rest/v1/user_test_sessions', {
+            method: 'POST',
+            headers: {
+              'apikey':        SUPA_KEY,
+              'Authorization': 'Bearer ' + (stored.access_token || SUPA_KEY),
+              'Content-Type':  'application/json',
+              'Prefer':        'return=minimal',
+            },
+            body: JSON.stringify({ user_id: stored.user.id, ...record }),
+          });
+        } catch {}
+      }
+    }
+
+    return record;
+  }
+
+  window.supabaseClient = {
+    getStoredSession, fetchUserProfile, mapProfileToDemo, loadSessionProfile,
+    saveTestSession, getTestHistory,
+  };
 })();

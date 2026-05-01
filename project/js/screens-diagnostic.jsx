@@ -224,6 +224,19 @@ function DiagnosticResult({ goNav, result, setDemo }) {
     return [lAcc, rAcc, (lAcc + rAcc) / 2 - 0.05, lAcc * 0.95 + 0.05, rAcc * 0.9];
   }, [result]);
 
+  useEffectD(() => {
+    if (!result) return;
+    window.supabaseClient?.saveTestSession?.({
+      type: 'diagnostic',
+      listening_raw:    result.lCorrect,
+      reading_raw:      result.rCorrect,
+      listening_scaled: result.listening,
+      reading_scaled:   result.reading,
+      total_score:      (result.listening || 0) + (result.reading || 0),
+      answers:          result.answers || {},
+    });
+  }, []);
+
   const enterDashboard = () => {
     if (setDemo && result) {
       setDemo({
