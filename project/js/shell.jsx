@@ -84,7 +84,7 @@ function PointsFloater({ amount, label, onDone }) {
 }
 
 // Daily sign-in modal — appears after login
-function DailySignInModal({ streak, onClaim }) {
+function DailySignInModal({ streak, rival, demo, dark, onNav, onClaim }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(45,41,38,0.4)', backdropFilter: 'blur(8px)',
@@ -96,10 +96,17 @@ function DailySignInModal({ streak, onClaim }) {
         textAlign: 'center', position: 'relative', overflow: 'hidden',
         borderTop: '6px solid var(--terra)', boxShadow: 'var(--shadow-xl)',
         animation: 'slideUp 0.4s var(--ease-out) both',
+        maxHeight: '90vh', overflowY: 'auto',
       }}>
         <div style={{ position: 'absolute', top: -20, right: -20, opacity: 0.04, pointerEvents: 'none' }}>
           <Icon name="flame" size={200} stroke={1} />
         </div>
+
+        {/* Catch-up alert — only if rival exists and gap <= 200 */}
+        {rival && rival.gap <= 200 && (
+          <CatchUpBanner rival={rival} demo={demo} dark={dark} goNav={onNav} style={{ marginBottom: 24 }} />
+        )}
+
         <Eyebrow style={{ marginBottom: 16 }}>Daily Sign-in · 每日簽到</Eyebrow>
         <div style={{ fontSize: 64, marginBottom: 16 }}>🔥</div>
         <h2 style={{ marginBottom: 8 }}>連續登入 第 {streak} 天</h2>
@@ -128,6 +135,43 @@ function DailySignInModal({ streak, onClaim }) {
             );
           })}
         </div>
+
+        {/* Milestone alerts */}
+        {streak === 3 && (
+          <div style={{
+            background: 'linear-gradient(135deg, var(--terra) 0%, rgba(175,76,47,0.7) 100%)',
+            color: '#fff', padding: 20, borderRadius: 12, marginBottom: 20,
+            textAlign: 'center', boxShadow: '0 8px 24px rgba(175,76,47,0.3)',
+          }}>
+            <div style={{ fontSize: 24, marginBottom: 8 }}>🎉</div>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900 }}>3 天里程碑達成！</h3>
+            <p style={{ margin: '8px 0 0', fontSize: 13, opacity: 0.9 }}>堅持 7 天即可解鎖特殊徽章</p>
+          </div>
+        )}
+
+        {streak === 7 && (
+          <div style={{
+            background: 'linear-gradient(135deg, #FFD700 0%, rgba(255,215,0,0.7) 100%)',
+            color: '#1a1a1a', padding: 20, borderRadius: 12, marginBottom: 20,
+            textAlign: 'center', boxShadow: '0 8px 24px rgba(255,215,0,0.3)',
+          }}>
+            <div style={{ fontSize: 24, marginBottom: 8 }}>⭐</div>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900 }}>7 天連續登入！</h3>
+            <p style={{ margin: '8px 0 0', fontSize: 13, opacity: 0.85 }}>獲得「連續鬥士」徽章 + 額外 70 點獎勵</p>
+          </div>
+        )}
+
+        {streak === 30 && (
+          <div style={{
+            background: 'linear-gradient(135deg, #FF1493 0%, rgba(255,20,147,0.7) 100%)',
+            color: '#fff', padding: 20, borderRadius: 12, marginBottom: 20,
+            textAlign: 'center', boxShadow: '0 8px 24px rgba(255,20,147,0.3)',
+          }}>
+            <div style={{ fontSize: 24, marginBottom: 8 }}>👑</div>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900 }}>30 天里程碑！</h3>
+            <p style={{ margin: '8px 0 0', fontSize: 13, opacity: 0.9 }}>成為「堅毅國王」</p>
+          </div>
+        )}
 
         <Button variant="primary" onClick={onClaim} style={{ fontSize: 16, padding: '14px 32px' }}>
           領取 +10 點

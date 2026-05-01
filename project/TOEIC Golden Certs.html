@@ -169,6 +169,11 @@ function App() {
     setConfetti(Date.now());
   }, []);
 
+  const findRival = useCallback((myPoints) => {
+    const rivalEntry = [...LEADERBOARD][Math.floor(Math.random() * LEADERBOARD.length)];
+    return rivalEntry ? { ...rivalEntry, gap: rivalEntry.score - myPoints } : null;
+  }, []);
+
   const claimSignIn = () => {
     setShowSignIn(false);
     setDemo(d => ({ ...d, points: d.points + 10 }));
@@ -218,7 +223,7 @@ function App() {
     <>
       {screens[route]}
 
-      {showSignIn && <DailySignInModal streak={demo.streak} onClaim={claimSignIn} />}
+      {showSignIn && <DailySignInModal streak={demo.streak} rival={findRival(demo.points || 0)} demo={demo} dark={tweaks.theme === 'dark'} onNav={goNav} onClaim={claimSignIn} />}
       {showDailyGate && <DailyQuestGate goNav={goNav} demo={demo} onSkip={() => { setShowDailyGate(false); }} />}
 
       {pointsFloater && (
@@ -332,3 +337,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
+
