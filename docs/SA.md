@@ -169,11 +169,13 @@ Routes are simulated via the `route` state string; no URL router is used in the 
 
 All demo data is mock, held in memory via `js/data.jsx` constants. The prototype optionally connects to Supabase when `window.SUPABASE_URL` and `window.SUPABASE_ANON_KEY` are set by the host page. When configured, `js/supabase-client.jsx` accesses the following REST endpoints:
 
-| Table | Used by | Purpose |
-|-------|---------|---------|
-| `user_profiles` | `fetchUserProfile` | Read learner profile (points, streak, scores, tier, etc.) |
-| `user_test_sessions` | `saveTestSession` | Persist completed test session records |
-| `shop_items` | `fetchShopItems` | Read reward shop catalogue |
+| Table | Used by | Access path | Purpose |
+|-------|---------|-------------|---------|
+| `user_profiles` | `fetchUserProfile` | `window.supabaseClient` | Read learner profile (points, streak, scores, tier, etc.) |
+| `user_test_sessions` | `saveTestSession` | `window.supabaseClient` | Persist completed test session records |
+| `shop_items` | `fetchShopItems` / `ShopScreen` fallback | `window.supabaseClient` / `window.supabase` | Read reward shop catalogue |
+| `leaderboard_entries` | `LeaderboardMini` (`js/screens-dashboard.jsx`) | `window.supabase` | Read top-5 leaderboard rows — columns: `rank, name, score, tier, avatar, delta` |
+| `user_path_progress` | `LearningPathScreen` (`js/screens-path.jsx`) | `window.supabase` | Read per-node completion records — columns: `node_id, completed_at, score, total, accuracy, pts, time, stars, kind, breakdown` |
 
 No Supabase migrations are included in this repository.
 
