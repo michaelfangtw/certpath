@@ -24,10 +24,10 @@ project/
 ├── tweaks-panel.jsx             ← dev Tweaks panel shell
 ├── styles/
 │   └── tokens.css               ← CSS design tokens
-├── vendor/                      ← vendored front-end dependencies (React 18 + Babel)
-│   ├── babel.min.js             ← Babel standalone transpiler
-│   ├── react.development.js     ← React 18 UMD build
-│   └── react-dom.development.js ← React DOM 18 UMD build
+├── vendor/                      ← local copies of CDN deps — used by Playwright for offline test mocking only (NOT loaded at runtime)
+│   ├── babel.min.js             ← mirrors unpkg.com/@babel/standalone@7.29.0/babel.min.js
+│   ├── react.development.js     ← mirrors unpkg.com/react@18.3.1/umd/react.development.js
+│   └── react-dom.development.js ← mirrors unpkg.com/react-dom@18.3.1/umd/react-dom.development.js
 ├── export/                      ← export snapshot for sharing / offline use
 │   ├── TOEIC Golden Certs.html  ← self-contained entry point
 │   └── src/                     ← source files bundled with the export snapshot
