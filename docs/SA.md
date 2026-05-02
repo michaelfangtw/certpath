@@ -151,6 +151,18 @@ All state lives in the root `App` component in `TOEIC Golden Certs.html`.
 
 ---
 
+## Custom Events
+
+Two custom `window` events are the only cross-file communication mechanism outside
+of React props. Both use the browser `CustomEvent` API.
+
+| Event | Payload (`event.detail`) | Dispatched by | Handled by | Purpose |
+|-------|--------------------------|--------------|------------|---------|
+| `certpath:openExamModal` | *(none)* | `DashboardScreen` (`js/screens-dashboard.jsx`) — `CountdownCard` "設定考試日期" button | `Navbar` (`js/shell.jsx`) — sets `examModalOpen` state to `true` | Opens `ExamTargetModal` from outside the Navbar |
+| `certpath:examTargetSet` | `{ date: string }` (ISO date from `localStorage`) | `ExamTargetModal` (`js/shell.jsx`) — on save | `CountdownCard` (`js/screens-dashboard.jsx`) — updates displayed countdown | Notifies dashboard that exam target date was saved to `localStorage` key `certpath_exam_target` |
+
+---
+
 ## Screen Routes
 
 Routes are simulated via the `route` state string; no URL router is used in the prototype.
