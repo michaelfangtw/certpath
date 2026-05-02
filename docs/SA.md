@@ -18,6 +18,28 @@
 
 ## Directory Structure
 
+Top-level repository layout:
+
+```
+certpath/
+├── project/             ← single-page app source (see subtree below)
+├── docs/
+│   └── SA.md            ← this file
+├── openspec/
+│   ├── config.yaml
+│   └── changes/         ← OpenSpec change proposals
+├── tests/
+│   └── quiz.spec.js     ← 7 Playwright E2E tests (quiz flow, explanations, Part 1 photos)
+│                           Uses local vendor/ files to mock CDN URLs for offline runs
+├── playwright.config.js ← Playwright config (testDir: ./tests, webServer: python http.server 8765)
+├── package.json         ← devDependencies: @playwright/test ^1.59.1
+├── package-lock.json
+├── vercel.json          ← Vercel deployment configuration
+└── readme.md
+```
+
+`project/` subtree:
+
 ```
 project/
 ├── TOEIC Golden Certs.html      ← single-page app entry point
@@ -53,11 +75,6 @@ project/
     ├── screens-path.jsx         ← Learning path tree
     ├── screens-shadowing.jsx    ← Shadowing practice
     └── screens-daily-quest.jsx  ← Daily vocab quest
-docs/
-└── SA.md                        ← this file
-openspec/
-├── config.yaml
-└── changes/                     ← OpenSpec change proposals
 ```
 
 ---
