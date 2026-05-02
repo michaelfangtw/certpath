@@ -177,6 +177,25 @@ All demo data is mock, held in memory via `js/data.jsx` constants. The prototype
 
 No Supabase migrations are included in this repository.
 
+### Raw Supabase client (`window.supabase`)
+
+Three components bypass `supabaseClient` and call the Supabase JS SDK client
+directly via `window.supabase`:
+
+| Component | File | Table queried |
+|-----------|------|--------------|
+| `LeaderboardMini` | `js/screens-dashboard.jsx` | `leaderboard_entries` |
+| `ShopScreen` (fallback path) | `js/screens-extras.jsx` | `shop_items` |
+| `LearningPathScreen` | `js/screens-path.jsx` | `user_path_progress` |
+
+`window.supabase` is the raw `@supabase/supabase-js` SDK client (normally created
+via `createClient()`), distinct from the custom REST wrapper `window.supabaseClient`
+exported by `js/supabase-client.jsx`. **`window.supabase` is never initialized
+anywhere in this repository** — there is no Supabase JS SDK `<script>` tag, no
+`createClient()` call, and no `window.supabase = …` assignment. All three usages
+guard against this with `if (!sb) return`, so they silently fall back to mock/local
+data in every current environment (local dev, E2E, and Vercel preview).
+
 ## API Endpoints
 
 None — this is a static HTML prototype with no server-side API. Planned for Phase B: `api/coach.js` (Claude API proxy) and `api/config.js`.
