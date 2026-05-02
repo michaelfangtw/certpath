@@ -114,7 +114,7 @@ All state lives in the root `App` component in `TOEIC Golden Certs.html`.
 |----------|------|---------|
 | `tweaks` | object | Dev panel settings via `useTweaks` — `theme`, `certTier`, `demoTier`, `showCoachBadge`, `vibe` |
 | `route` | string | Current active screen key (e.g. `'dashboard'`, `'quiz'`) |
-| `demo` | object | Active learner profile (points, streak, accuracy, tier, etc.) |
+| `demo` | object | Active learner profile. Core fields from `DEMO_TIERS[demoTier]`: `points`, `streak`, `accuracy`, `predicted`, `listening`, `reading`, `radar`, `tier`, `daysLeft`, `completed`. Additional fields set by `App`: `firstName` (string), `name` (string), `avatar` (string — single initial). Daily-progress fields hydrated from localStorage on mount: `completedToday` (number — daily quest completions, persisted under `certpath_daily_completed` as `{ date, count }`), `gamesCompletedToday` (number — mini-game completions, persisted under `certpath_games_completed` as `{ date, count }`) |
 | `diagResult` | object\|null | Diagnostic result; seeds `demo` after first diagnostic |
 | `quizResult` | object\|null | Last quiz result; passed to `QuizResult` screen |
 | `showSignIn` | boolean | Whether to show the daily sign-in reward modal |
