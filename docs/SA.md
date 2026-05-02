@@ -73,7 +73,7 @@ public symbols onto `window`.
 | `tweaks-panel.jsx` | `useTweaks` `TweaksPanel` `TweakSection` `TweakRow` `TweakSlider` `TweakToggle` `TweakRadio` `TweakSelect` `TweakText` `TweakNumber` `TweakColor` `TweakButton` |
 | `js/data.jsx` | `DIAGNOSTIC` `SAMPLE_QUIZ` `QUIZ_PARTS` `scaleListening` `scaleReading` `DEMO_TIERS` `LEADERBOARD` `COACH_GREETINGS` `APP_VERSION` |
 | `js/primitives.jsx` | `Icon` `Logo` `Eyebrow` `Button` `Badge` `PaperCard` `CertBadge` `TIER` `tierFromScore` `useCountUp` |
-| `js/shell.jsx` | `Navbar` `PointsFloater` `DailySignInModal` `AudioPlayer` `Part1Photo` |
+| `js/shell.jsx` | `Navbar` `PointsFloater` `DailySignInModal` `AudioPlayer` `Part1Photo` — internal (not exported): `ExamTargetModal` (props: `onClose`, `dark`) — modal for setting exam target date, rendered by `Navbar` when `examModalOpen` is true, opened via the `certpath:openExamModal` custom event |
 | `js/screens-landing.jsx` | `LandingScreen` `LoginScreen` |
 | `js/screens-diagnostic.jsx` | `DiagnosticIntro` `DiagnosticScreen` `DiagnosticResult` `RadarChartAnimated` |
 | `js/screens-dashboard.jsx` | `DashboardScreen` `CoachChat` `CatchUpBanner` `SectionHeader` |
